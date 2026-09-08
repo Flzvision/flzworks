@@ -1,7 +1,7 @@
 :root {
-  --font-display: "Archivo", "Helvetica Neue", Helvetica, sans-serif;
-  --font-ui: "Archivo", "Helvetica Neue", Helvetica, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --font-display: "Inter", "Helvetica Neue", Helvetica, sans-serif;
+  --font-ui: "Inter", "Helvetica Neue", Helvetica, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
 
   /* Display — tight, near-black, optically negative tracking */
   --type-display-xl: 700 76px/0.92 var(--font-display);

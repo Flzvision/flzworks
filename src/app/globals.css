@@ -78,7 +78,7 @@ html {
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
-  --font-serif: var(--font-serif);
+  --font-serif: var(--font-sans);
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -187,9 +187,9 @@ html {
   --lucid-shadow-press: inset 0 2px 6px color-mix(in srgb, #14120F 22%, transparent);
 
   /* ── Typography ── */
-  --lucid-font-display: var(--font-archivo, "Archivo", "Helvetica Neue", Helvetica, sans-serif);
-  --lucid-font-ui: var(--font-archivo, "Archivo", "Helvetica Neue", Helvetica, sans-serif);
-  --lucid-font-mono: var(--font-ibm-plex-mono, "IBM Plex Mono", ui-monospace, Menlo, monospace);
+  --lucid-font-display: var(--font-sans, "Inter", "Helvetica Neue", Helvetica, sans-serif);
+  --lucid-font-ui: var(--font-sans, "Inter", "Helvetica Neue", Helvetica, sans-serif);
+  --lucid-font-mono: var(--font-mono, "JetBrains Mono", ui-monospace, Menlo, monospace);
 
   --lucid-type-display-xl: 700 76px/0.92 var(--lucid-font-display);
   --lucid-type-display-lg: 700 56px/0.94 var(--lucid-font-display);
@@ -726,7 +726,7 @@ select[aria-invalid="true"] {
 }
 
 .nav-bar-logo {
-  font-family: var(--font-serif), serif;
+  font-family: var(--font-sans), sans-serif;
   font-style: italic;
   font-size: 22px;
   font-weight: 500;
@@ -928,7 +928,7 @@ select[aria-invalid="true"] {
   width: fit-content;
   max-width: 100%;
   padding: 0 24px;
-  font-family: var(--font-serif), serif;
+  font-family: var(--font-sans), sans-serif;
   font-weight: 300;
   font-style: italic;
   line-height: 0.88;
@@ -978,7 +978,7 @@ select[aria-invalid="true"] {
 }
 
 .hero-tagline {
-  font-family: var(--font-serif), serif;
+  font-family: var(--font-sans), sans-serif;
   font-size: 18px;
   font-weight: 300;
   font-style: italic;
@@ -1000,7 +1000,7 @@ select[aria-invalid="true"] {
 }
 
 .hero-stat-num {
-  font-family: var(--font-serif), serif;
+  font-family: var(--font-sans), sans-serif;
   font-size: 32px;
   font-weight: 400;
   color: rgba(255,255,255,0.88);
@@ -1157,7 +1157,7 @@ select[aria-invalid="true"] {
 }
 
 .section-heading {
-  font-family: var(--font-serif), serif;
+  font-family: var(--font-sans), sans-serif;
   font-size: clamp(48px, 7vw, 96px);
   font-weight: 300;
   line-height: 1;
@@ -1266,7 +1266,7 @@ select[aria-invalid="true"] {
 }
 
 .masonry-card-title {
-  font-family: var(--font-serif), serif;
+  font-family: var(--font-sans), sans-serif;
   font-size: 19px;
   font-weight: 500;
   color: var(--text-primary);
@@ -1398,7 +1398,7 @@ select[aria-invalid="true"] {
 }
 
 .narrative-title {
-  font-family: var(--font-serif), serif;
+  font-family: var(--font-sans), sans-serif;
   font-size: 48px;
   font-weight: 300;
   line-height: 1.1;
@@ -1463,7 +1463,7 @@ select[aria-invalid="true"] {
 }
 
 .identity-mark {
-  font-family: var(--font-serif), serif;
+  font-family: var(--font-sans), sans-serif;
   font-size: 120px;
   font-weight: 300;
   font-style: italic;
@@ -1478,7 +1478,7 @@ select[aria-invalid="true"] {
 }
 
 .identity-name {
-  font-family: var(--font-serif), serif;
+  font-family: var(--font-sans), sans-serif;
   font-size: 48px;
   font-weight: 400;
   color: rgba(255,255,255,0.9);
@@ -1538,7 +1538,7 @@ select[aria-invalid="true"] {
 }
 
 .footer-brand {
-  font-family: var(--font-serif), serif;
+  font-family: var(--font-sans), sans-serif;
   font-size: 48px;
   font-weight: 300;
   font-style: italic;
@@ -2398,7 +2398,7 @@ select[aria-invalid="true"] {
   padding-bottom: 56px;
   background-color: var(--bp-bg);
   color: var(--bp-fg);
-  font-family: var(--font-ibm-plex-mono), ui-monospace, monospace;
+  font-family: var(--font-mono), monospace;
   background-image: linear-gradient(var(--bp-line) 1px, transparent 1px), linear-gradient(90deg, var(--bp-line) 1px, transparent 1px);
   background-size: 28px 28px;
   -webkit-font-smoothing: antialiased;
@@ -2491,7 +2491,7 @@ select[aria-invalid="true"] {
 }
 .bp-hero-headline {
   margin: 10px 0 0;
-  font-family: var(--font-space-grotesk), system-ui, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
   font-weight: 700;
   font-size: 56px;
   line-height: 1;
@@ -2680,7 +2680,7 @@ select[aria-invalid="true"] {
   background-color: var(--bp-bg);
   border: var(--bp-border-strong);
   color: var(--bp-fg);
-  font-family: var(--font-ibm-plex-mono), ui-monospace, monospace;
+  font-family: var(--font-mono), monospace;
 }
 .bp-modal-header {
   border-bottom: var(--bp-border-light);
@@ -2982,7 +2982,7 @@ select[aria-invalid="true"] {
   border: var(--bp-border-strong) !important;
   border-color: var(--bp-accent) !important;
   color: var(--bp-fg);
-  font-family: var(--font-ibm-plex-mono), ui-monospace, monospace;
+  font-family: var(--font-mono), monospace;
   box-shadow: 0 10px 30px rgba(18, 40, 75, 0.8);
   background-image: linear-gradient(var(--bp-line) 1px, transparent 1px), linear-gradient(90deg, var(--bp-line) 1px, transparent 1px);
   background-size: 14px 14px;
@@ -3165,7 +3165,7 @@ select[aria-invalid="true"] {
 
 .bp-modal-title {
   margin-top: 6px;
-  font-family: var(--font-space-grotesk), system-ui, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
   font-weight: 600;
   font-size: 22px;
   letter-spacing: -0.01em;
