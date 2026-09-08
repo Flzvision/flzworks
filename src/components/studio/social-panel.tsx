@@ -36,13 +36,6 @@ export function SocialPanel({
   const [entries, setEntries] = useState<SocialEntry[]>(initial);
   const [saving, setSaving] = useState(false);
   const [syncing, setSyncing] = useState(false);
-  const [metricsSaving, setMetricsSaving] = useState(false);
-  const [manualMetrics, setManualMetrics] = useState(() =>
-    Object.fromEntries(initialMetrics.accounts.map((account) => [account.platform, {
-      followers: account.followers?.toString() ?? "",
-      likes: account.likes?.toString() ?? "",
-    }])),
-  );
 
   const update = (platform: string, patch: Partial<SocialEntry>) =>
     setEntries((prev) => prev.map((e) => (e.platform === platform ? { ...e, ...patch } : e)));
@@ -98,39 +91,6 @@ export function SocialPanel({
     }
   };
 
-  const saveManualMetrics = async () => {
-    setMetricsSaving(true);
-    try {
-      const accounts = entries.map(({ platform }) => ({
-        platform,
-        followers: manualMetrics[platform]?.followers.trim() === ""
-          ? null
-          : Number(manualMetrics[platform].followers),
-        likes: manualMetrics[platform]?.likes.trim() === ""
-          ? null
-          : Number(manualMetrics[platform].likes),
-      }));
-      if (accounts.some((account) =>
-        (account.followers !== null && (!Number.isInteger(account.followers) || account.followers < 0)) ||
-        (account.likes !== null && (!Number.isInteger(account.likes) || account.likes < 0)))) {
-        throw new Error("Follower and like counts must be positive whole numbers.");
-      }
-      const response = await fetch("/api/flz/social-metrics", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ accounts }),
-      });
-      const data = await response.json().catch(() => null);
-      if (!response.ok || !data?.success) throw new Error(data?.error || "Could not save social metrics");
-      window.dispatchEvent(new Event("flz-social-metrics-updated"));
-      notify("Social pulse saved");
-    } catch (error) {
-      notify(error instanceof Error ? error.message : "Could not save social metrics", "error");
-    } finally {
-      setMetricsSaving(false);
-    }
-  };
-
   return (
     <>
       <SectionHead
@@ -175,43 +135,22 @@ export function SocialPanel({
 
         <Panel icon={<Radio size={16} />} title="Social pulse">
           <p className={s.panelNote}>
-            These persisted values keep the production sidebar useful until official provider API
-            credentials are connected. Connected API values automatically take precedence.
+            Followers and likes come only from the official provider APIs. The sidebar refreshes
+            every minute and keeps the last successful API response clearly marked as stale if a
+            provider is temporarily unavailable.
           </p>
-          <div className={s.grid3} style={{ marginTop: 14 }}>
-            {entries.map(({ platform }) => (
-              <div key={platform} className={s.panelStack}>
-                <strong>{PLATFORM_LABEL[platform]}</strong>
-                <Field label="Followers">
-                  <input
-                    className={s.input}
-                    inputMode="numeric"
-                    value={manualMetrics[platform]?.followers ?? ""}
-                    onChange={(event) => setManualMetrics((previous) => ({
-                      ...previous,
-                      [platform]: { ...previous[platform], followers: event.target.value },
-                    }))}
-                  />
-                </Field>
-                <Field label="Likes">
-                  <input
-                    className={s.input}
-                    inputMode="numeric"
-                    value={manualMetrics[platform]?.likes ?? ""}
-                    onChange={(event) => setManualMetrics((previous) => ({
-                      ...previous,
-                      [platform]: { ...previous[platform], likes: event.target.value },
-                    }))}
-                  />
-                </Field>
+          <div className={s.panelStack} style={{ marginTop: 14 }}>
+            {initialMetrics.accounts.map((account) => (
+              <div className={s.saveBar} key={account.platform}>
+                <strong>{PLATFORM_LABEL[account.platform]}</strong>
+                <span className={s.saveBarText}>
+                  {account.status === "live" && "Live API connected"}
+                  {account.status === "stale" && "API unavailable - showing the last live response"}
+                  {account.status === "error" && (account.error || "Provider API error")}
+                  {account.status === "disconnected" && "Official API authorization required"}
+                </span>
               </div>
             ))}
-          </div>
-          <div className={s.saveBar}>
-            <span className={s.saveBarText}>Stored in the production database.</span>
-            <button type="button" className={`${s.btn} ${s.btnPrimary}`} disabled={metricsSaving} onClick={saveManualMetrics}>
-              {metricsSaving ? <Spinner /> : <Save size={15} />} Save social pulse
-            </button>
           </div>
         </Panel>
 

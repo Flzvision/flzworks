@@ -153,7 +153,7 @@ async function fetchInstagramPosts(): Promise<NormalizedSocialPost[]> {
   return posts;
 }
 
-async function refreshTikTokAccessToken(): Promise<string | null> {
+export async function getTikTokAccessToken(): Promise<string | null> {
   const clientKey = process.env.TIKTOK_CLIENT_KEY?.trim();
   const clientSecret = process.env.TIKTOK_CLIENT_SECRET?.trim();
   const storedRefresh = await prisma.flzSetting.findUnique({
@@ -199,7 +199,7 @@ async function refreshTikTokAccessToken(): Promise<string | null> {
 }
 
 async function fetchTikTokPosts(): Promise<NormalizedSocialPost[]> {
-  const token = await refreshTikTokAccessToken();
+  const token = await getTikTokAccessToken();
   if (!token) return [];
 
   const fields = "id,title,video_description,cover_image_url,share_url,embed_link,create_time";

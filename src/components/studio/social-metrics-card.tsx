@@ -70,7 +70,17 @@ export function SocialMetricsCard({
       </div>
       <div className={s.socialTrackerRows}>
         {snapshot.accounts.map((account) => (
-          <div className={s.socialTrackerRow} key={account.platform}>
+          <div
+            className={s.socialTrackerRow}
+            key={account.platform}
+            title={account.error || (
+              account.status === "disconnected"
+                ? `${PLATFORM_LABELS[account.platform]} API is not connected`
+                : account.status === "stale"
+                  ? "Showing the last successful provider response"
+                  : "Live provider data"
+            )}
+          >
             <span className={s.socialTrackerNetwork} title={PLATFORM_LABELS[account.platform]}>
               <span className={s.socialTrackerMark} aria-hidden="true">
                 {PLATFORM_MARKS[account.platform]}
@@ -87,7 +97,11 @@ export function SocialMetricsCard({
         ))}
       </div>
       <span className={s.srOnly} role="status" aria-live="polite">
-        {snapshot.updatedAt ? "Social metrics updated" : "Social metrics are not connected"}
+        {snapshot.accounts.some((account) => account.status === "live")
+          ? "Live social metrics updated"
+          : snapshot.accounts.some((account) => account.status === "stale")
+            ? "Showing previously fetched live social metrics"
+            : "Social provider APIs are not connected"}
       </span>
     </section>
   );
