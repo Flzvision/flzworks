@@ -17,15 +17,23 @@
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
   animation: consent-in .32s cubic-bezier(.22,1,.36,1) both;
 }
+/* Secondary text alphas stay >= 4.5:1 against the near-white panel (WCAG AA). */
 .eyebrow {
-  color: rgba(29,29,31,.48);
+  color: rgba(29,29,31,.68);
   font: 600 10px/1 "SFMono-Regular", "SF Mono", ui-monospace, Menlo, monospace;
   letter-spacing: .1em;
   text-transform: uppercase;
 }
 .title { margin: 9px 0 7px; font-size: 19px; line-height: 1.15; letter-spacing: -.025em; }
-.copy { margin: 0; color: rgba(29,29,31,.68); font-size: 13px; line-height: 1.5; }
-.meta { margin: 9px 0 0; color: rgba(29,29,31,.5); font-size: 11px; line-height: 1.45; }
+.copy { margin: 0; color: rgba(29,29,31,.74); font-size: 13px; line-height: 1.5; }
+.meta { margin: 9px 0 0; color: rgba(29,29,31,.7); font-size: 11px; line-height: 1.45; }
+.link { color: #0066cc; text-decoration: underline; text-underline-offset: 2px; }
+.link:hover { color: #004f9e; }
+.link:focus-visible {
+  outline: 3px solid rgba(0,113,227,.45);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
 .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 15px; }
 .accept,.decline {
   min-height: 44px;
@@ -46,12 +54,13 @@
 }
 .close {
   position: absolute;
-  top: 12px;
-  right: 14px;
-  padding: 4px 7px;
+  top: 8px;
+  right: 10px;
+  min-height: 32px;
+  padding: 4px 9px;
   border: 0;
   background: transparent;
-  color: rgba(29,29,31,.54);
+  color: rgba(29,29,31,.7);
   font: 500 11px/1 -apple-system, BlinkMacSystemFont, sans-serif;
   cursor: pointer;
 }
@@ -64,7 +73,7 @@
   padding: 4px 2px;
   border: 0;
   background: transparent;
-  color: rgba(29,29,31,.62);
+  color: rgba(29,29,31,.72);
   box-shadow: none;
   font: 500 10px/1 "SFMono-Regular", "SF Mono", ui-monospace, Menlo, monospace;
   letter-spacing: .025em;

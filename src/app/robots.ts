@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: ["/", "/id", "/autosalon", "/uidesign", "/uidesign/*"],
+        allow: ["/", "/id", "/autosalon", "/uidesign", "/uidesign/*", "/privacy", "/cookies", "/terms", "/legal"],
         disallow: [
           "/studio",
           "/autosalon-new",

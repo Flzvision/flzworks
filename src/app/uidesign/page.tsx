@@ -46,8 +46,8 @@ const THEMES: Theme[] = [
       "--ds-blur": "24px",
       "--ds-saturate": "160%",
       "--ds-shadow": "0 20px 50px rgba(0,0,0,0.5)",
-      "--ds-font": "'Outfit', system-ui, sans-serif",
-      "--ds-font-display": "'Syne', sans-serif",
+      "--ds-font": "var(--font-outfit), system-ui, sans-serif",
+      "--ds-font-display": "var(--font-syne), sans-serif",
       "--ds-ease": "cubic-bezier(0.16, 1, 0.3, 1)",
     },
   },
@@ -77,8 +77,8 @@ const THEMES: Theme[] = [
       "--ds-blur": "25px",
       "--ds-saturate": "120%",
       "--ds-shadow": "0 20px 50px rgba(0,0,0,0.35), 0 0 80px rgba(255,255,255,0.05)",
-      "--ds-font": "'Outfit', system-ui, sans-serif",
-      "--ds-font-display": "'Outfit', sans-serif",
+      "--ds-font": "var(--font-outfit), system-ui, sans-serif",
+      "--ds-font-display": "var(--font-outfit), sans-serif",
       "--ds-ease": "cubic-bezier(0.175, 0.885, 0.32, 1.275)",
     },
   },
@@ -177,22 +177,23 @@ const THEMES: Theme[] = [
   },
 ];
 
-function Toggle({ defaultOn }: { defaultOn: boolean }) {
+function Toggle({ defaultOn, label }: { defaultOn: boolean; label: string }) {
   const [on, setOn] = useState(defaultOn);
   return (
     <button
       type="button"
       className={`ds-toggle ${on ? "on" : ""}`}
       onClick={() => setOn((v) => !v)}
-      aria-pressed={on}
-      aria-label="Toggle"
+      role="switch"
+      aria-checked={on}
+      aria-label={label}
     >
       <span className="ds-knob" />
     </button>
   );
 }
 
-function Slider({ defaultValue }: { defaultValue: number }) {
+function Slider({ defaultValue, label }: { defaultValue: number; label: string }) {
   const [val, setVal] = useState(defaultValue);
   const trackRef = useRef<HTMLDivElement>(null);
 
@@ -215,7 +216,25 @@ function Slider({ defaultValue }: { defaultValue: number }) {
   };
 
   return (
-    <div className="ds-slider" ref={trackRef} onPointerDown={onPointerDown} role="slider" aria-valuenow={Math.round(val)} aria-valuemin={0} aria-valuemax={100} tabIndex={0}>
+    <div
+      className="ds-slider"
+      ref={trackRef}
+      onPointerDown={onPointerDown}
+      onKeyDown={(e) => {
+        const step = e.key === "ArrowRight" || e.key === "ArrowUp" ? 5 : e.key === "ArrowLeft" || e.key === "ArrowDown" ? -5 : 0;
+        if (!step) return;
+        // Keep arrow keys on the slider from also switching showcase slides.
+        e.preventDefault();
+        e.stopPropagation();
+        setVal((v) => Math.min(100, Math.max(0, v + step)));
+      }}
+      role="slider"
+      aria-label={label}
+      aria-valuenow={Math.round(val)}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      tabIndex={0}
+    >
       <div className="ds-slider-fill" style={{ width: `${val}%` }} />
       <div className="ds-slider-thumb" style={{ left: `${val}%` }} />
     </div>
@@ -265,15 +284,15 @@ function PreviewBoard({ theme }: { theme: Theme }) {
           <div className="ds-controls">
             <div className="ds-control-row">
               <span className="ds-control-name">Notifications</span>
-              <Toggle defaultOn />
+              <Toggle defaultOn label="Notifications" />
             </div>
             <div className="ds-control-row">
               <span className="ds-control-name">Airplane Mode</span>
-              <Toggle defaultOn={false} />
+              <Toggle defaultOn={false} label="Airplane Mode" />
             </div>
             <div className="ds-control-row ds-slider-row">
               <span className="ds-control-name">Volume</span>
-              <Slider defaultValue={64} />
+              <Slider defaultValue={64} label="Volume" />
             </div>
           </div>
 
@@ -319,9 +338,6 @@ export default function UiDesignBoard() {
 
   return (
     <div className="ds-root" style={{ "--cur-accent": cur.accent, "--cur-glow": cur.glow } as React.CSSProperties}>
-      {/* Fonts (hoisted to <head> by React) */}
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=Syne:wght@600;700;800&display=swap" />
-
       {/* SVG defs: refraction filter (Liquid Glass) + squircle clip path (n=4, k=0.9091) */}
       <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden="true">
         <defs>
@@ -349,7 +365,7 @@ export default function UiDesignBoard() {
       <div className="ds-stage">
         <div className="ds-track" style={{ transform: `translateX(-${active * 100}%)` }}>
           {THEMES.map((theme, i) => (
-            <div className="ds-slide" key={theme.id} aria-hidden={i !== active}>
+            <div className="ds-slide" key={theme.id} aria-hidden={i !== active} inert={i !== active}>
               <PreviewBoard theme={theme} />
               <div className="ds-caption">
                 <span className="ds-index">{String(i + 1).padStart(2, "0")} / {String(THEMES.length).padStart(2, "0")}</span>
@@ -483,11 +499,11 @@ export default function UiDesignBoard() {
 
         /* Caption */
         .ds-caption { width: 100%; max-width: 560px; display: flex; flex-direction: column; gap: 5px; align-items: center; text-align: center; }
-        .ds-index { font-size: 10.5px; font-weight: 600; letter-spacing: 2px; color: rgba(255,255,255,0.25); }
+        .ds-index { font-size: 10.5px; font-weight: 600; letter-spacing: 2px; color: rgba(255,255,255,0.62); }
         .ds-name { margin: 1px 0 0; font-size: 24px; font-weight: 600; letter-spacing: 0.4px; }
-        .ds-tagline { margin: 0; font-size: 12px; letter-spacing: 0.5px; text-transform: uppercase; color: rgba(255,255,255,0.4); }
+        .ds-tagline { margin: 0; font-size: 12px; letter-spacing: 0.5px; text-transform: uppercase; color: rgba(255,255,255,0.7); }
         .ds-cap-tags { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 6px; }
-        .ds-cap-tag { font-size: 10px; font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase; color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding: 3px 9px; border-radius: 20px; }
+        .ds-cap-tag { font-size: 10px; font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase; color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding: 3px 9px; border-radius: 20px; }
 
         /* Arrows / dots / hint */
         .ds-arrow { position: absolute; top: 50%; transform: translateY(-50%); z-index: 30; width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09); color: rgba(255,255,255,0.55); cursor: pointer; transition: all 0.2s ease; }
@@ -498,8 +514,8 @@ export default function UiDesignBoard() {
         .ds-arrow:hover .ds-arrow-peek { opacity: 1; }
         .ds-dots { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 30; display: flex; gap: 9px; }
         .ds-dot { width: 8px; height: 8px; padding: 0; border: none; border-radius: 999px; background: rgba(255,255,255,0.16); cursor: pointer; transition: all 0.3s ease; }
-        .ds-hint { position: absolute; bottom: 20px; right: 30px; z-index: 30; font-size: 11px; color: rgba(255,255,255,0.22); letter-spacing: 0.4px; }
-        .ds-hint span { font-weight: 600; color: rgba(255,255,255,0.4); }
+        .ds-hint { position: absolute; bottom: 20px; right: 30px; z-index: 30; font-size: 11px; color: rgba(255,255,255,0.62); letter-spacing: 0.4px; }
+        .ds-hint span { font-weight: 600; color: rgba(255,255,255,0.8); }
 
         @media (max-width: 760px) { .ds-slide { padding: 18px 60px 12px; } .ds-preview { padding: 24px; } .ds-hint { display: none; } }
         @media (max-width: 520px) { .ds-arrow { width: 42px; height: 42px; } .ds-arrow-left { left: 8px; } .ds-arrow-right { right: 8px; } .ds-slide { padding: 14px 52px 12px; } }

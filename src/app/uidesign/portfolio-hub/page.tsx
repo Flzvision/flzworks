@@ -3,9 +3,11 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { relativeAge } from "@/lib/flz-date";
+import { ExternalEmbed } from "@/components/external-embed";
+import { LegalLinks } from "@/components/legal-links";
 import { TelemetryConsent } from "@/components/telemetry-consent";
 import { TELEMETRY_READY_EVENT, trackTelemetryEvent } from "@/lib/telemetry-client";
-import { PUBLIC_CONTACT_PROFILE, PUBLIC_CONTACT_ROWS } from "@/lib/public-contact-profile";
+import { PUBLIC_CONTACT_PROFILE, PUBLIC_CONTACT_QR_SRC, PUBLIC_CONTACT_ROWS } from "@/lib/public-contact-profile";
 
 // ── Design token CSS (flz-works DS, scoped to this page) ─────────────────────
 const DS_TOKENS = `
@@ -741,7 +743,7 @@ const DS_TOKENS = `
   .flz-hub-root {
     --flz-text-primary: #1d1d1f;
     --flz-text-secondary: #5f5f65;
-    --flz-text-muted: #74747b;
+    --flz-text-muted: #6e6e73; /* 4.7:1 on #f5f5f7 — WCAG AA for the 10–11px labels */
     --flz-surface: #ffffff;
     --flz-surface-secondary: #f5f5f7;
     --flz-surface-tertiary: #e8e8ed;
@@ -1248,7 +1250,6 @@ function ContactCard() {
       `FN:${PUBLIC_CONTACT_PROFILE.name}`, "N:Flosz;Bence;;;",
       "ORG:FLZ Works",
       `TITLE:${PUBLIC_CONTACT_PROFILE.interest}`,
-      `EMAIL:${PUBLIC_CONTACT_PROFILE.email}`,
       `URL:${PUBLIC_CONTACT_PROFILE.webUrl}`,
       "END:VCARD",
     ].join("\n");
@@ -1287,7 +1288,7 @@ function ContactCard() {
         {/* QR */}
         <div className="flz-contact-qr" style={{ flexShrink: 0, width: 120, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10, padding: 12, borderRadius: 20, background: "#fff" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://flz.works" alt="QR" style={{ display: "block", width: "100%", height: "auto" }} />
+          <img src={PUBLIC_CONTACT_QR_SRC} alt="QR code linking to flz.works" width={200} height={200} style={{ display: "block", width: "100%", height: "auto" }} />
         </div>
       </div>
     </div>
@@ -1436,21 +1437,25 @@ function MessagePanel() {
       <form className="flz-message-form" onSubmit={sendMessage}>
         <div className="flz-message-fields">
           <label>
-            <span>Name</span>
+            <span>Name (optional)</span>
             <input value={name} onChange={(event) => setName(event.target.value)} autoComplete="name" maxLength={100} placeholder="Your name" />
           </label>
           <label>
-            <span>Email</span>
+            <span>Email (required)</span>
             <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" maxLength={100} placeholder="you@example.com" required />
           </label>
         </div>
         <label>
-          <span>Message</span>
+          <span>Message (required)</span>
           <textarea value={message} onChange={(event) => setMessage(event.target.value)} maxLength={5000} placeholder="Tell me what you’re building…" required />
         </label>
+        <p className="flz-message-status">
+          Your email, message and optional name are stored only to reply to you.{" "}
+          <Link href="/privacy#data" style={{ color: "#fff4f5", textDecoration: "underline" }}>Privacy policy</Link>
+        </p>
         <div className="flz-message-action">
           <span className={`flz-message-status ${status}`} role="status" aria-live="polite">
-            {status === "success" ? "Message sent — thank you." : status === "error" ? error : "Usually replies within 1–2 business days."}
+            {status === "success" ? "Message sent — thank you." : status === "error" ? error : ""}
           </span>
           <button className="flz-btn-solid" type="submit" disabled={status === "sending"}>
             {status === "sending" ? "Sending…" : "Send message"}
@@ -1544,7 +1549,7 @@ function MainSlab({
       {/* Filter chips */}
       <div className="flz-enter flz-filters" style={{ "--flz-delay": "140ms", display: "flex", gap: 9, alignItems: "center", flexWrap: "wrap" } as React.CSSProperties}>
         {filters.map(f => (
-          <button key={f} className={`flz-chip${activeFilter === f && activeView === "projects" ? " active" : ""}`} onClick={() => { setProjectPage(0); setActiveFilter(f); setActiveView("projects"); }}>{f}</button>
+          <button key={f} type="button" aria-pressed={activeFilter === f && activeView === "projects"} className={`flz-chip${activeFilter === f && activeView === "projects" ? " active" : ""}`} onClick={() => { setProjectPage(0); setActiveFilter(f); setActiveView("projects"); }}>{f}</button>
         ))}
       </div>
 
@@ -1585,7 +1590,14 @@ function MainSlab({
           {/* Featured card */}
           <div className="flz-tile flz-featured" style={{ flex: "1.25", minHeight: 0, display: "flex", flexDirection: "column", overflow: "hidden", borderRadius: 28, background: "#1c1a17", border: "1px solid rgba(255,255,255,.10)", textDecoration: "none", color: "inherit" }}>
             <div style={{ flex: 1, minHeight: 120, position: "relative", overflow: "hidden" }}>
-              <iframe src="https://sketchfab.com/models/cbb1b3572d0545f8a8fdbdb09836ebd6/embed?autostart=1&preload=1&transparent=1&ui_hint=0" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: "none" }} allow="autoplay; fullscreen; xr-spatial-tracking" />
+              <ExternalEmbed
+                src="https://sketchfab.com/models/cbb1b3572d0545f8a8fdbdb09836ebd6/embed?autostart=1&preload=1&transparent=1&ui_hint=0"
+                title="Pentagon Athaan 2026 — live 3D model"
+                provider="Sketchfab (Epic Games)"
+                storageKey="sketchfab"
+                allow="autoplay; fullscreen; xr-spatial-tracking"
+                iframeStyle={{ position: "absolute", inset: 0, zIndex: 6, width: "100%", height: "100%", border: "none" }}
+              />
               <span style={{ position: "absolute", top: 12, left: 12, zIndex: 1 }}>
                 <span className="flz-badge">Featured · latest</span>
               </span>
@@ -1603,8 +1615,11 @@ function MainSlab({
       </div>
 
       <footer className="flz-enter flz-footer" style={{ "--flz-delay": "270ms" } as React.CSSProperties}>
-        <span>© 2026 FLZ Works. All rights reserved.</span>
-        <TelemetryConsent site="main" inline />
+        <span>© 2026 Bence Flosz · FLZ Works</span>
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "4px 14px" }}>
+          <LegalLinks />
+          <TelemetryConsent site="main" inline />
+        </div>
       </footer>
     </div>
   );
@@ -1770,7 +1785,7 @@ export default function PortfolioHubPage() {
       )}
 
       {/* Content */}
-      <div className="flz-content" style={{ position: "relative", zIndex: 1, display: "flex", gap: 24, padding: "40px 44px", minHeight: "100vh", boxSizing: "border-box" }}>
+      <main lang="en" className="flz-content" style={{ position: "relative", zIndex: 1, display: "flex", gap: 24, padding: "40px 44px", minHeight: "100vh", boxSizing: "border-box" }}>
         <IconRail contactOpen={contactOpen} setContactOpen={setContactOpen} activeView={activeView} setActiveView={setActiveView} />
         <MainSlab
           daysBuilding={daysBuilding}
@@ -1784,7 +1799,7 @@ export default function PortfolioHubPage() {
           theme={theme}
           onThemeToggle={toggleTheme}
         />
-      </div>
+      </main>
     </div>
   );
 }

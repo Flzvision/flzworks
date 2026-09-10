@@ -29,5 +29,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.7,
     },
+    ...["/privacy", "/cookies", "/terms", "/legal"].map((path) => ({
+      url: `${baseUrl}${path}`,
+      lastModified,
+      changeFrequency: "yearly" as const,
+      priority: 0.2,
+    })),
   ];
 }

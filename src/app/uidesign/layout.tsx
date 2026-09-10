@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { Outfit, Syne } from "next/font/google";
+
+// Self-hosted by next/font at build time, so visitors never request Google Fonts.
+const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
+const syne = Syne({ subsets: ["latin"], weight: ["600", "700", "800"], variable: "--font-syne" });
 
 export const metadata: Metadata = {
   title: {
@@ -16,7 +20,11 @@ export default function UiDesignLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="uidesign-root font-sans" style={{ fontFamily: "var(--font-sans), system-ui, sans-serif" }}>
+    <div
+      lang="en"
+      className={`uidesign-root font-sans ${outfit.variable} ${syne.variable}`}
+      style={{ fontFamily: "var(--font-sans), system-ui, sans-serif" }}
+    >
       {children}
     </div>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import type { TelemetryEventType, TelemetrySite } from "@/lib/telemetry";
 import {
   registerTelemetrySender,
@@ -128,24 +129,25 @@ export function TelemetryConsent({ site, inline = false }: TelemetryConsentProps
       {consent === "granted" && <TelemetrySession site={site} />}
 
       {showPanel ? (
-        <section className={s.panel} role="dialog" aria-label="Analytics privacy settings">
+        <section className={s.panel} role="dialog" aria-labelledby={`telemetry-consent-title-${site}`}>
           <div className={s.eyebrow}>Privacy-friendly analytics</div>
-          <h2 className={s.title}>May FLZ Works measure this visit?</h2>
+          <h2 className={s.title} id={`telemetry-consent-title-${site}`}>May FLZ Works measure this visit?</h2>
           <p className={s.copy}>
             With your permission, this site records first-party visit duration and aggregate social
             and vCard interactions. It uses no analytics cookies, advertising profiles, IP storage,
-            user-agent storage, referrers, or cross-site tracking. Raw visit data is kept for up to 90 days.
+            user-agent storage, referrers, or cross-site tracking. Visit records are deleted after about 12 months.
           </p>
           <p className={s.meta}>
-            Controller: FLZ Works / Bence Flosz · 7BFloszB@gmail.com. Purpose: improve the portfolio.
-            Legal basis: your consent. Data is not shared with third parties, and you can withdraw here at any time.
+            Controller: Bence Flosz (FLZ Works), Budapest. Purpose: improve the portfolio.
+            Legal basis: your consent. The data is only stored with the site&apos;s hosting provider, and you can
+            withdraw here at any time. <Link href="/privacy#analytics" className={s.link}>Privacy policy</Link>
           </p>
           <div className={s.actions}>
             <button type="button" className={s.accept} onClick={() => choose("granted")}>
               Allow analytics
             </button>
             <button type="button" className={s.decline} onClick={() => choose("denied")}>
-              {consent === "granted" ? "Turn off analytics" : "Decline"}
+              {consent === "granted" ? "Turn off analytics" : "Decline analytics"}
             </button>
           </div>
           {consent !== "undecided" && (

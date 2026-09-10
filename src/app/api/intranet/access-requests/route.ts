@@ -7,6 +7,16 @@ import { AUTOPIAC_INTRANET_MODULE, ALLOWED_INTRANET_MODULES, type IntranetModule
 import { intranetAccessRequestSchema } from "@/lib/validation";
 
 const REQUEST_TTL_MS = 1000 * 60 * 60 * 24;
+// Personal data (name, email, IP) is kept 30 days past expiry, as promised on /privacy.
+const RETENTION_AFTER_EXPIRY_MS = 1000 * 60 * 60 * 24 * 30;
+
+async function deleteExpiredAccessRecords(now: Date) {
+  const cutoff = new Date(now.getTime() - RETENTION_AFTER_EXPIRY_MS);
+  await Promise.all([
+    prisma.intranetAccessRequest.deleteMany({ where: { expiresAt: { lt: cutoff } } }),
+    prisma.intranetIpBlock.deleteMany({ where: { expiresAt: { lt: cutoff } } }),
+  ]);
+}
 
 function getAppBaseUrl(request: NextRequest) {
   return process.env.APP_BASE_URL || request.nextUrl.origin;
@@ -23,6 +33,8 @@ export async function POST(request: NextRequest) {
   if (!ALLOWED_INTRANET_MODULES.includes(requestModule as IntranetModule)) {
     return NextResponse.json({ error: "Invalid module specified." }, { status: 400 });
   }
+
+  await deleteExpiredAccessRecords(new Date());
 
   const ipAddress = getClientIpFromHeaders(request.headers);
   const activeBlock = await prisma.intranetIpBlock.findFirst({

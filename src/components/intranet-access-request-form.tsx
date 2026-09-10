@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import Link from "next/link";
 import { Mail, Send, User } from "lucide-react";
 
 export function IntranetAccessRequestForm({ module = "autopiac" }: { module?: string }) {
@@ -59,6 +60,7 @@ export function IntranetAccessRequestForm({ module = "autopiac" }: { module?: st
             name="name"
             required
             minLength={2}
+            autoComplete="name"
             className="portfolio-input h-12 w-full rounded-lg pl-10 pr-3 outline-none"
           />
         </span>
@@ -71,12 +73,20 @@ export function IntranetAccessRequestForm({ module = "autopiac" }: { module?: st
             name="email"
             type="email"
             required
+            autoComplete="email"
             className="portfolio-input h-12 w-full rounded-lg pl-10 pr-3 outline-none"
           />
         </span>
       </label>
-      {error && <p className="rounded-lg border border-rose-400/30 bg-rose-500/10 px-4 py-3 text-sm font-semibold text-rose-100">{error}</p>}
-      {message && <p className="rounded-lg border border-emerald-300/25 bg-emerald-400/10 px-4 py-3 text-sm font-semibold text-emerald-100">{message}</p>}
+      <p className="text-xs leading-relaxed text-zinc-300">
+        Your name, email address and IP address are sent to the site owner so they can approve the request and
+        prevent abuse. The request is deleted 30 days after it or the granted access expires.{" "}
+        <Link href="/privacy#intranet" className="font-semibold text-white underline underline-offset-2">
+          Privacy policy
+        </Link>
+      </p>
+      {error && <p role="alert" className="rounded-lg border border-rose-400/30 bg-rose-500/10 px-4 py-3 text-sm font-semibold text-rose-100">{error}</p>}
+      {message && <p role="status" className="rounded-lg border border-emerald-300/25 bg-emerald-400/10 px-4 py-3 text-sm font-semibold text-emerald-100">{message}</p>}
       <button
         type="submit"
         disabled={pending}

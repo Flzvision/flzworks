@@ -2660,7 +2660,7 @@ select[aria-invalid="true"] {
   border-right: 0;
 }
 .bp-titleblock-label {
-  color: rgba(220, 231, 245, 0.5);
+  color: rgba(220, 231, 245, 0.75);
 }
 .bp-titleblock-value {
   margin-top: 4px;
@@ -2876,7 +2876,7 @@ select[aria-invalid="true"] {
 .bp-form-cell-label {
   font-size: 8px;
   letter-spacing: 0.16em;
-  color: rgba(220, 231, 245, 0.5);
+  color: rgba(220, 231, 245, 0.75);
   font-weight: 600;
 }
 .bp-form-cell-input,
@@ -2896,7 +2896,7 @@ select[aria-invalid="true"] {
 }
 .bp-form-cell-input::placeholder,
 .bp-form-cell-textarea::placeholder {
-  color: rgba(220, 231, 245, 0.25) !important;
+  color: rgba(220, 231, 245, 0.6) !important;
 }
 .bp-form-cell-input:focus,
 .bp-form-cell-textarea:focus {
@@ -3110,7 +3110,7 @@ select[aria-invalid="true"] {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(220, 231, 245, 0.5);
+  color: rgba(220, 231, 245, 0.75);
 }
 
 .bp-transmission-embed {
@@ -3212,7 +3212,7 @@ select[aria-invalid="true"] {
   text-align: center;
   font-size: 10px;
   letter-spacing: 0.2em;
-  color: rgba(220, 231, 245, 0.4);
+  color: rgba(220, 231, 245, 0.75);
   border: var(--bp-border-dashed);
 }
 

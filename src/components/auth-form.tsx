@@ -2,6 +2,7 @@
 
 import { FormEvent, useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import Script from "next/script";
 import { Lock, Mail, User, Loader2 } from "lucide-react";
 import type { Dictionary, Locale } from "@/lib/i18n";
@@ -427,7 +428,24 @@ export function AuthForm({
           {mode === "login" ? t.auth.loginCta : t.auth.registerCta}
         </button>
 
-        <p className="text-sm font-semibold text-slate-500">{t.auth.demo}</p>
+        {mode === "register" && (
+          <p className="text-xs leading-relaxed text-slate-600">
+            {locale === "hu" ? (
+              <>
+                A regisztrációval elfogadod a{" "}
+                <Link href="/terms" className="font-semibold text-cyan-800 underline">felhasználási feltételeket</Link>, és
+                tudomásul veszed az{" "}
+                <Link href="/privacy#data" className="font-semibold text-cyan-800 underline">adatkezelési tájékoztatót</Link>.
+              </>
+            ) : (
+              <>
+                By creating an account you agree to the{" "}
+                <Link href="/terms" className="font-semibold text-cyan-800 underline">Terms of use</Link> and acknowledge the{" "}
+                <Link href="/privacy#data" className="font-semibold text-cyan-800 underline">Privacy policy</Link>.
+              </>
+            )}
+          </p>
+        )}
       </form>
     </div>
   );

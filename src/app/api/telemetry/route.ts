@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { deleteExpiredTelemetry } from "@/lib/telemetry";
 
 const payloadSchema = z.object({
   action: z.enum(["start", "heartbeat", "end", "event"]),
@@ -29,6 +30,8 @@ export async function POST(request: NextRequest) {
 
   try {
     if (payload.action === "start") {
+      // Enforce the published retention period even if nobody opens the Studio dashboard.
+      void deleteExpiredTelemetry(now).catch((error) => console.error("Telemetry retention cleanup failed:", error));
       await prisma.telemetrySession.upsert({
         where: { id: payload.sessionId },
         create: {

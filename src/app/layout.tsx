@@ -53,8 +53,8 @@ export default async function RootLayout({
                 This interactive 3D portfolio and application suite requires JavaScript. Please enable JavaScript in your browser for the full experience.
               </p>
               <div className="pt-4 text-xs font-mono flex flex-wrap justify-center gap-4 text-cyan-400">
-                <a href="mailto:floszbeni@gmail.com" className="underline hover:text-cyan-300">
-                  Email: floszbeni@gmail.com
+                <a href="/privacy" className="underline hover:text-cyan-300">
+                  Privacy policy
                 </a>
                 <a
                   href="https://github.com/Flzvision"

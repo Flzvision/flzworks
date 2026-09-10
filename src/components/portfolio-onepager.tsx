@@ -6,10 +6,12 @@ import Image from "next/image";
 import Link from "next/link";
 import type { PortfolioArticleWithImages } from "@/lib/portfolio-sync";
 import { Image as ImageIcon, X } from "lucide-react";
+import { ExternalEmbed } from "@/components/external-embed";
+import { LegalLinks } from "@/components/legal-links";
 import { TelemetryConsent } from "@/components/telemetry-consent";
 import { TELEMETRY_READY_EVENT, trackTelemetryEvent } from "@/lib/telemetry-client";
 import type { TelemetrySite } from "@/lib/telemetry";
-import { PUBLIC_CONTACT_PROFILE, PUBLIC_CONTACT_ROWS } from "@/lib/public-contact-profile";
+import { PUBLIC_CONTACT_PROFILE, PUBLIC_CONTACT_QR_SRC, PUBLIC_CONTACT_ROWS } from "@/lib/public-contact-profile";
 
 const CATEGORY_LABELS: Record<string, string> = {
   CAR_DESIGN: "3D & Environments",
@@ -99,7 +101,6 @@ export function PortfolioOnepager({ instagramMedia, articles, forceNamecardOpen 
       `FN:${PUBLIC_CONTACT_PROFILE.name}`,
       "ORG:FLZ Works",
       `TITLE:${PUBLIC_CONTACT_PROFILE.interest}`,
-      `EMAIL;TYPE=PREF,INTERNET:${PUBLIC_CONTACT_PROFILE.email}`,
       `URL:${PUBLIC_CONTACT_PROFILE.webUrl}`,
       "END:VCARD"
     ].join("\n");
@@ -138,6 +139,18 @@ export function PortfolioOnepager({ instagramMedia, articles, forceNamecardOpen 
     window.addEventListener(TELEMETRY_READY_EVENT, recordView);
     return () => window.removeEventListener(TELEMETRY_READY_EVENT, recordView);
   }, [isNamecardOpen, telemetrySite]);
+
+  // Escape closes the namecard and project dialogs (the lightbox handles its own keys).
+  useEffect(() => {
+    if (activeGallery || !(selectedArticle || (isNamecardOpen && !forceNamecardOpen))) return;
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      if (selectedArticle) setSelectedArticle(null);
+      else setIsNamecardOpen(false);
+    };
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [activeGallery, selectedArticle, isNamecardOpen, forceNamecardOpen]);
 
   // Keyboard navigation for lightbox
   useEffect(() => {
@@ -274,15 +287,17 @@ export function PortfolioOnepager({ instagramMedia, articles, forceNamecardOpen 
         </nav>
       </header>
 
+      <main lang="en">
       {/* Hero Section */}
       <section id="hero" className="bp-hero">
         <div className="bp-hero-media">
-          <iframe
-            className="bp-hero-iframe"
-            title="Pentagon Athaan 2026"
+          <ExternalEmbed
             src="https://sketchfab.com/models/cbb1b3572d0545f8a8fdbdb09836ebd6/embed?autostart=1&preload=1&transparent=1&ui_hint=0"
+            title="Pentagon Athaan 2026 — live 3D model"
+            provider="Sketchfab (Epic Games)"
+            storageKey="sketchfab"
             allow="autoplay; fullscreen; xr-spatial-tracking"
-            loading="lazy"
+            iframeClassName="bp-hero-iframe"
           />
         </div>
         <div className="bp-hero-title">
@@ -300,15 +315,19 @@ export function PortfolioOnepager({ instagramMedia, articles, forceNamecardOpen 
             <span className="bp-section-label bp-accent">■ LOG</span>
             <div className="flex gap-2 font-mono text-[9px] tracking-wider uppercase">
               <button
+                type="button"
+                aria-pressed={selectedCategory === "ALL"}
                 onClick={() => setSelectedCategory("ALL")}
-                className={`px-2 py-0.5 border border-[#dce7f5]/20 hover:border-[#dce7f5]/50 transition-colors ${selectedCategory === "ALL" ? "text-[#ffd166] border-[#ffd166]" : "text-[#dce7f5]/60"
+                className={`px-2 py-0.5 border border-[#dce7f5]/20 hover:border-[#dce7f5]/50 transition-colors ${selectedCategory === "ALL" ? "text-[#ffd166] border-[#ffd166]" : "text-[#dce7f5]/80"
                   }`}
               >
                 [ALL]
               </button>
               <button
+                type="button"
+                aria-pressed={selectedCategory === "AUTOMOTIVE"}
                 onClick={() => setSelectedCategory("AUTOMOTIVE")}
-                className={`px-2 py-0.5 border border-[#dce7f5]/20 hover:border-[#dce7f5]/50 transition-colors ${selectedCategory === "AUTOMOTIVE" ? "text-[#ffd166] border-[#ffd166]" : "text-[#dce7f5]/60"
+                className={`px-2 py-0.5 border border-[#dce7f5]/20 hover:border-[#dce7f5]/50 transition-colors ${selectedCategory === "AUTOMOTIVE" ? "text-[#ffd166] border-[#ffd166]" : "text-[#dce7f5]/80"
                   }`}
               >
                 [3D & ENVIRONMENTS]
@@ -344,7 +363,7 @@ export function PortfolioOnepager({ instagramMedia, articles, forceNamecardOpen 
                         unoptimized
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-[#dce7f5]/5 text-[#dce7f5]/30 text-[9px]">
+                      <div className="w-full h-full flex items-center justify-center bg-[#dce7f5]/5 text-[#dce7f5]/75 text-[9px]">
                         NO IMAGE
                       </div>
                     )}
@@ -413,7 +432,7 @@ export function PortfolioOnepager({ instagramMedia, articles, forceNamecardOpen 
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center bg-[#dce7f5]/5 transition-colors hover:bg-[#dce7f5]/10">
                     <span className="text-2xl font-bold tracking-wider text-[#ffd166]">IG</span>
-                    <span className="text-[8px] opacity-40 mt-1">INSTAGRAM.COM/VISION.FLZ</span>
+                    <span className="text-[8px] opacity-80 mt-1">INSTAGRAM.COM/VISION.FLZ</span>
                   </div>
                 )}
               </div>
@@ -430,7 +449,7 @@ export function PortfolioOnepager({ instagramMedia, articles, forceNamecardOpen 
             >
               <div className="bp-sheet-img flex flex-col items-center justify-center bg-[#dce7f5]/5 transition-colors hover:bg-[#dce7f5]/10">
                 <span className="text-2xl font-bold tracking-wider text-[#ffd166]">TT</span>
-                <span className="text-[8px] opacity-40 mt-1">TIKTOK.COM/@VISION.FLZ</span>
+                <span className="text-[8px] opacity-80 mt-1">TIKTOK.COM/@VISION.FLZ</span>
               </div>
               <div className="bp-sheet-caption">TIKTOK — @VISION.FLZ</div>
             </a>
@@ -445,7 +464,7 @@ export function PortfolioOnepager({ instagramMedia, articles, forceNamecardOpen 
             >
               <div className="bp-sheet-img flex flex-col items-center justify-center bg-[#dce7f5]/5 transition-colors hover:bg-[#dce7f5]/10">
                 <span className="text-2xl font-bold tracking-wider text-[#ffd166]">LI</span>
-                <span className="text-[8px] opacity-40 mt-1">LINKEDIN PROFILE</span>
+                <span className="text-[8px] opacity-80 mt-1">LINKEDIN PROFILE</span>
               </div>
               <div className="bp-sheet-caption">LINKEDIN — BENCE FLOSZ</div>
             </a>
@@ -491,7 +510,7 @@ export function PortfolioOnepager({ instagramMedia, articles, forceNamecardOpen 
                 />
               </div>
               <div className="bp-form-cell">
-                <label htmlFor="contact-email" className="bp-form-cell-label">EMAIL</label>
+                <label htmlFor="contact-email" className="bp-form-cell-label">EMAIL (OPTIONAL — NEEDED FOR A REPLY)</label>
                 <input
                   id="contact-email"
                   type="email"
@@ -528,17 +547,24 @@ export function PortfolioOnepager({ instagramMedia, articles, forceNamecardOpen 
                 </span>
               )}
               {formStatus === "error" && (
-                <span className="bp-form-status-msg error">
+                <span className="bp-form-status-msg error" role="alert">
                   ERROR: {formError.toUpperCase()}
                 </span>
               )}
             </div>
           </form>
+          <p className="mt-3 font-mono text-[10px] leading-relaxed text-[#dce7f5]/80">
+            Your message and optional name and email are stored only to read and answer it.{" "}
+            <Link href="/privacy#data" className="text-[#ffd166] underline">Privacy policy</Link>
+          </p>
+          <LegalLinks className="mt-2 font-mono text-[10px] text-[#dce7f5]/80" />
         </div>
       </section>
 
+      </main>
+
       {/* Footer / Titleblock */}
-      <footer id="contact" className="bp-titleblock">
+      <footer id="contact" className="bp-titleblock" lang="en">
         <div className="bp-titleblock-cell">
           <div className="bp-titleblock-label">IMAGINED BY</div>
           <div className="bp-titleblock-value">FLZ</div>
@@ -602,6 +628,9 @@ export function PortfolioOnepager({ instagramMedia, articles, forceNamecardOpen 
           <div
             className="flex flex-col md:flex-row gap-4 items-stretch max-w-[560px] md:max-w-[720px] w-full"
             onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal={!forceNamecardOpen}
+            aria-label="Bence Flosz virtual namecard"
           >
             {/* QR Card (Left Side) — White background, black QR Code, full height of ID Card */}
             <div
@@ -609,8 +638,8 @@ export function PortfolioOnepager({ instagramMedia, articles, forceNamecardOpen 
               className="p-3 flex flex-col items-center justify-center shrink-0 w-full md:w-auto bp-namecard-qr-aside"
             >
               <Image
-                src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://flz.works"
-                alt="QR Code flz.works"
+                src={PUBLIC_CONTACT_QR_SRC}
+                alt="QR code linking to flz.works"
                 width={300}
                 height={300}
                 className="w-full h-auto md:h-full md:w-auto object-contain max-w-full"
@@ -688,6 +717,9 @@ export function PortfolioOnepager({ instagramMedia, articles, forceNamecardOpen 
           <div
             className="relative w-full max-w-5xl bp-modal-card rounded-none overflow-hidden shadow-2xl transition-all duration-500 scale-100 max-h-[90vh] flex flex-col"
             onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-label={selectedArticle.title}
           >
             {/* Header */}
             <div className="flex items-center justify-between bp-modal-header">
@@ -749,7 +781,8 @@ export function PortfolioOnepager({ instagramMedia, articles, forceNamecardOpen 
                     {selectedArticle.images.map((img, idx) => {
                       const imgPath = `/api/portfolio/media/${selectedArticle.folderName}/${img}?w=800`;
                       return (
-                        <div
+                        <button
+                          type="button"
                           key={img}
                           onClick={() => {
                             setActiveGallery({
@@ -759,10 +792,11 @@ export function PortfolioOnepager({ instagramMedia, articles, forceNamecardOpen 
                             });
                           }}
                           className="bp-modal-img-wrap"
+                          aria-label={`Open image ${idx + 1} of ${selectedArticle.images.length} full screen`}
                         >
                           <Image
                             src={imgPath}
-                            alt={img}
+                            alt={`${selectedArticle.title} — image ${idx + 1}`}
                             fill
                             className={`${
                               imageAlign === "fit" ? "object-contain bg-[#12284b]" : "object-cover"
@@ -770,7 +804,7 @@ export function PortfolioOnepager({ instagramMedia, articles, forceNamecardOpen 
                             sizes="(max-width: 768px) 100vw, 33vw"
                             unoptimized
                           />
-                        </div>
+                        </button>
                       );
                     })}
                   </div>
@@ -786,6 +820,9 @@ export function PortfolioOnepager({ instagramMedia, articles, forceNamecardOpen 
         <div
           className="fixed inset-0 z-[60] flex items-center justify-center bp-lightbox-overlay animate-fadeIn"
           onClick={() => setActiveGallery(null)}
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Image ${activeGallery.index + 1} of ${activeGallery.images.length}`}
         >
           <button
             aria-label="Close gallery"
@@ -821,7 +858,7 @@ export function PortfolioOnepager({ instagramMedia, articles, forceNamecardOpen 
           <div className="relative max-w-5xl w-full h-[85vh] mx-6" onClick={(e) => e.stopPropagation()}>
             <Image
               src={`/api/portfolio/media/${activeGallery.folderName}/${activeGallery.images[activeGallery.index]}?w=1920`}
-              alt={activeGallery.images[activeGallery.index]}
+              alt={`Project image ${activeGallery.index + 1} of ${activeGallery.images.length}`}
               fill
               className="object-contain"
               sizes="100vw"

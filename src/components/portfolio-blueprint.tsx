@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { ExternalEmbed } from "@/components/external-embed";
+import { LegalLinks } from "@/components/legal-links";
 import type { PortfolioArticleWithImages } from "@/lib/portfolio-sync";
 import type { SocialEntry, SocialPlatform } from "@/lib/social-config";
 
@@ -192,11 +194,9 @@ export function PortfolioBlueprint({ articles, transmissions }: PortfolioBluepri
             <div className="bp-titleblock-value">2026</div>
           </div>
           <div className="bp-titleblock-cell">
-            <div className="bp-titleblock-label">CONTACT</div>
-            <div className="bp-titleblock-value bp-accent">
-              <a href="mailto:floszbeni@gmail.com" className="bp-titleblock-link">
-                FLOSZBENI@GMAIL.COM ↗
-              </a>
+            <div className="bp-titleblock-label">LEGAL</div>
+            <div className="bp-titleblock-value">
+              <LegalLinks />
             </div>
           </div>
         </div>
@@ -243,52 +243,28 @@ export function PortfolioBlueprint({ articles, transmissions }: PortfolioBluepri
    show a static poster frame until then so first paint stays cheap.
    ───────────────────────────────────────────────────────────────────────── */
 function SketchfabHero() {
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const [inView, setInView] = useState(false);
-
-  useEffect(() => {
-    const el = wrapRef.current;
-    if (!el) return;
-    if (typeof IntersectionObserver === "undefined") {
-      setInView(true);
-      return;
-    }
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          setInView(true);
-          io.disconnect();
-        }
-      },
-      { rootMargin: "200px" },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
+  // The poster stays until the visitor opts in to loading the Sketchfab viewer.
   return (
-    <div ref={wrapRef} className="bp-hero-media">
-      {inView ? (
-        <iframe
-          title="Pentagon Athaan 2026 — live 3D model"
-          src={SKETCHFAB_SRC}
-          className="bp-hero-iframe"
-          allow="autoplay; fullscreen; xr-spatial-tracking"
-          loading="lazy"
-        />
-      ) : (
+    <div className="bp-hero-media">
+      <ExternalEmbed
+        src={SKETCHFAB_SRC}
+        title="Pentagon Athaan 2026 — live 3D model"
+        provider="Sketchfab (Epic Games)"
+        storageKey="sketchfab"
+        allow="autoplay; fullscreen; xr-spatial-tracking"
+        iframeClassName="bp-hero-iframe"
+      >
         <div className="bp-hero-poster">
           <Image
             src={HERO_POSTER}
-            alt="Pentagon Athaan 2026 model — loading live viewer"
+            alt="Pentagon Athaan 2026 concept car render"
             fill
             priority
             sizes="100vw"
             className="bp-hero-poster-img"
           />
-          <span className="bp-hero-poster-note">◐ LOADING LIVE MODEL…</span>
         </div>
-      )}
+      </ExternalEmbed>
     </div>
   );
 }
@@ -484,7 +460,7 @@ function Lightbox({
 }) {
   const current = gallery.images[gallery.index];
   return (
-    <div className="bp-lightbox" onClick={onClose}>
+    <div className="bp-lightbox" onClick={onClose} role="dialog" aria-modal="true" aria-label={`Image ${gallery.index + 1} of ${gallery.images.length}`}>
       <button type="button" className="bp-lightbox-close" onClick={onClose} aria-label="Close">
         ✕
       </button>
@@ -513,7 +489,7 @@ function Lightbox({
       <div className="bp-lightbox-stage" onClick={(e) => e.stopPropagation()}>
         <Image
           src={mediaUrl(gallery.folderName, current, 1920)}
-          alt={current}
+          alt={`Project image ${gallery.index + 1} of ${gallery.images.length}`}
           fill
           sizes="100vw"
           className="bp-lightbox-img"
