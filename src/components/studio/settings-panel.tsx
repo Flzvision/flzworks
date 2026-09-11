@@ -7,8 +7,12 @@ import s from "./studio.module.css";
 
 const DEFAULT_START = "2023-09-01";
 
+const HERO_SUBHEAD_PLACEHOLDER =
+  "I'm Bence. I model, rig and code the whole thing myself, out of Budapest. Everything below is in progress and gets posted as it happens.";
+
 const KEYS = [
   "hero_headline",
+  "hero_subhead",
   "building_start_date",
   "followers_count",
   "wishlists_count",
@@ -96,11 +100,28 @@ export function SettingsPanel({
             />
           </Field>
 
+          <Field
+            label="Sub-line"
+            hint="The sentence under the headline. Say what you are actually doing right now — it is the first thing a visitor reads after the title."
+          >
+            <textarea
+              className={s.textarea}
+              rows={3}
+              maxLength={2000}
+              value={form.hero_subhead}
+              placeholder={HERO_SUBHEAD_PLACEHOLDER}
+              onChange={(e) => set("hero_subhead", e.target.value)}
+            />
+          </Field>
+
           <div className={s.preview}>
             <div className={s.previewLabel}>Preview</div>
             <h3 className={s.previewHeadline}>
               {form.hero_headline.trim() || "Games and 3D,\nbuilt in public."}
             </h3>
+            <p className={s.previewSubhead}>
+              {form.hero_subhead.trim() || HERO_SUBHEAD_PLACEHOLDER}
+            </p>
             <div className={s.previewStats}>
               <div className={s.previewStat}>
                 <div className={s.previewStatLabel}>Building since</div>
@@ -109,14 +130,20 @@ export function SettingsPanel({
                   <small>days</small>
                 </div>
               </div>
-              <div className={s.previewStat}>
-                <div className={s.previewStatLabel}>Followers</div>
-                <div className={s.previewStatValue}>{form.followers_count || "soon"}</div>
-              </div>
-              <div className={s.previewStat}>
-                <div className={s.previewStatLabel}>Wishlists</div>
-                <div className={s.previewStatValue}>{form.wishlists_count || "soon"}</div>
-              </div>
+              {/* Empty counters are hidden on the live page rather than shown
+                  reading "soon", so the preview hides them too. */}
+              {form.followers_count.trim() && (
+                <div className={s.previewStat}>
+                  <div className={s.previewStatLabel}>Followers</div>
+                  <div className={s.previewStatValue}>{form.followers_count}</div>
+                </div>
+              )}
+              {form.wishlists_count.trim() && (
+                <div className={s.previewStat}>
+                  <div className={s.previewStatLabel}>Wishlists</div>
+                  <div className={s.previewStatValue}>{form.wishlists_count}</div>
+                </div>
+              )}
             </div>
           </div>
         </Panel>
@@ -134,19 +161,19 @@ export function SettingsPanel({
                 onChange={(e) => set("building_start_date", e.target.value)}
               />
             </Field>
-            <Field label="Followers" hint="Free text — “soon”, “1.2k”, anything.">
+            <Field label="Followers" hint="Free text — “1.2k”, “840”. Leave empty to hide the tile.">
               <input
                 className={s.input}
                 value={form.followers_count}
-                placeholder="soon"
+                placeholder="Leave empty to hide"
                 onChange={(e) => set("followers_count", e.target.value)}
               />
             </Field>
-            <Field label="Wishlists" hint="Free text — shown as typed.">
+            <Field label="Wishlists" hint="Shown as typed. Leave empty to hide the tile.">
               <input
                 className={s.input}
                 value={form.wishlists_count}
-                placeholder="soon"
+                placeholder="Leave empty to hide"
                 onChange={(e) => set("wishlists_count", e.target.value)}
               />
             </Field>

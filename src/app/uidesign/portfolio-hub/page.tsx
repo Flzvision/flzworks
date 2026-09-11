@@ -12,10 +12,13 @@ import { PUBLIC_CONTACT_PROFILE, PUBLIC_CONTACT_QR_SRC, PUBLIC_CONTACT_ROWS } fr
 // ── Design token CSS (flz-works DS, scoped to this page) ─────────────────────
 const DS_TOKENS = `
   .flz-hub-root {
+    /* Three faces, three jobs. Serif speaks (wordmark, headlines, card titles),
+       sans runs the interface, mono is reserved for literal machine data —
+       counts, dates, tool strings. Nothing borrows another's job. */
     --flz-font-primary: var(--font-sans), "Inter", Arial, sans-serif;
-    --flz-font-display: var(--flz-font-primary);
+    --flz-font-display: var(--font-display), "Instrument Serif", Georgia, serif;
     --flz-font-sans: var(--flz-font-primary);
-    --flz-font-mono: var(--flz-font-primary);
+    --flz-font-mono: var(--font-mono), "JetBrains Mono", ui-monospace, monospace;
     font-family: var(--flz-font-primary);
     font-synthesis: none;
 
@@ -61,26 +64,6 @@ const DS_TOKENS = `
     --flz-dur-base: 240ms;
   }
 
-  .flz-hub-root,
-  .flz-hub-root * {
-    font-family: var(--flz-font-primary) !important;
-  }
-
-  @keyframes flz-drift1 {
-    0%   { transform: translate3d(0,0,0) scale(1); }
-    50%  { transform: translate3d(90px,54px,0) scale(1.14); }
-    100% { transform: translate3d(0,0,0) scale(1); }
-  }
-  @keyframes flz-drift2 {
-    0%   { transform: translate3d(0,0,0) scale(1.06); }
-    50%  { transform: translate3d(-120px,-40px,0) scale(.92); }
-    100% { transform: translate3d(0,0,0) scale(1.06); }
-  }
-  @keyframes flz-drift3 {
-    0%   { transform: translate3d(0,0,0) scale(.96); }
-    50%  { transform: translate3d(60px,-70px,0) scale(1.2); }
-    100% { transform: translate3d(0,0,0) scale(.96); }
-  }
   /* ── Entrance / transition motion ──────────────────────────────────────── */
   @keyframes flz-rise {
     from { opacity: 0; transform: translateY(14px); }
@@ -117,7 +100,6 @@ const DS_TOKENS = `
   .flz-modal    { animation: flz-modal-in .28s var(--flz-ease-glass) both; }
 
   @media (prefers-reduced-motion: reduce) {
-    .flz-orb { animation: none !important; }
     .flz-enter, .flz-view, .flz-tile-in, .flz-backdrop, .flz-modal {
       animation-duration: 1ms !important;
       animation-delay: 0ms !important;
@@ -208,7 +190,7 @@ const DS_TOKENS = `
   .flz-project-title {
     margin: 0;
     color: #fff;
-    font: 650 19px/1.12 var(--flz-font-display);
+    font: 600 18px/1.18 var(--flz-font-sans);
     letter-spacing: -.02em;
     text-shadow: 0 1px 2px rgba(0,0,0,.95), 0 0 14px rgba(0,0,0,.72);
     display: -webkit-box;
@@ -234,6 +216,12 @@ const DS_TOKENS = `
     text-transform: uppercase;
     text-shadow: 0 1px 5px rgba(0,0,0,.95);
   }
+  /* The lead tile is wider, so it can afford to say more. Type scales with it
+     rather than sitting at grid-tile size in a grid-and-a-half of space. */
+  .flz-tile-lead .flz-project-title { font: 600 25px/1.12 var(--flz-font-sans); letter-spacing: -.022em; }
+  .flz-tile-lead .flz-project-body { font-size: 13.5px; -webkit-line-clamp: 2; }
+  .flz-tile-lead .flz-project-content { min-height: 168px; padding: 72px 20px 20px; }
+
   .flz-tile.flz-project-tile:focus-visible {
     outline: 3px solid #0a84ff;
     outline-offset: 3px;
@@ -344,8 +332,6 @@ const DS_TOKENS = `
 
   /* ── Mobile layout ─────────────────────────────────────────────────────── */
   @media (max-width: 640px) {
-    /* Root: allow scroll on mobile */
-    .flz-hub-root { overflow: visible !important; }
     /* Content wrapper: stack vertically, tight padding, room for bottom bar */
     .flz-content {
       flex-direction: column !important;
@@ -399,6 +385,9 @@ const DS_TOKENS = `
       flex: 1 1 0% !important;
       aspect-ratio: 1;
     }
+    /* Single column on mobile — the lead tile's 2-col span must not survive */
+    .flz-grid { grid-template-columns: 1fr !important; grid-template-rows: none !important; }
+    .flz-grid > * { grid-column: auto !important; min-height: 210px !important; }
     /* Filter chips: horizontal scroll */
     .flz-filters {
       flex-wrap: nowrap !important;
@@ -462,14 +451,48 @@ const DS_TOKENS = `
       linear-gradient(180deg, #fbfbfd 0%, #f5f5f7 48%, #ececef 100%) !important;
     color-scheme: light;
   }
-  .flz-hub-root > .flz-orb-a { background: radial-gradient(closest-side,rgba(108,164,247,.46),transparent 72%) !important; }
-  .flz-hub-root > .flz-orb-b { background: radial-gradient(closest-side,rgba(247,175,144,.34),transparent 72%) !important; }
-  .flz-hub-root > .flz-orb-c { background: radial-gradient(closest-side,rgba(155,132,226,.3),transparent 72%) !important; }
+  .flz-ambient {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .flz-orb-key { background: radial-gradient(closest-side,rgba(108,164,247,.52),transparent 70%); }
+  .flz-orb-bounce { background: radial-gradient(closest-side,rgba(247,175,144,.32),transparent 74%); }
   .flz-orb {
-    contain: paint;
-    filter: none !important;
-    opacity: .88;
+    position: absolute;
+    pointer-events: none;
     transform: translateZ(0);
+  }
+  /* Keyed to the headline, not to the middle of the viewport. */
+  .flz-orb-key {
+    top: -16%;
+    left: -6%;
+    width: min(74vw, 880px);
+    height: min(52vw, 620px);
+    border-radius: 50%;
+    opacity: .72;
+  }
+  .flz-orb-bounce {
+    right: -14%;
+    bottom: -22%;
+    width: min(62vw, 720px);
+    height: min(44vw, 520px);
+    border-radius: 50%;
+    opacity: .58;
+  }
+  /* Grain over everything: it breaks the plastic-gradient sheen and gives the
+     flat fills a surface. Cheap — one tiled 120px SVG, no repaint. */
+  .flz-grain {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: .32;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.86' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+    background-size: 120px 120px;
   }
   .flz-slab {
     background: linear-gradient(145deg,rgba(255,255,255,.96),rgba(247,247,250,.94));
@@ -544,8 +567,8 @@ const DS_TOKENS = `
   .flz-message-intro h2 {
     margin: 18px 0 10px;
     color: #fff8f8;
-    font: 550 clamp(2rem,3.2vw,3.4rem)/.98 var(--flz-font-display);
-    letter-spacing: -.045em;
+    font: 400 clamp(2.1rem,3.4vw,3.5rem)/1.02 var(--flz-font-display);
+    letter-spacing: -.012em;
   }
   .flz-message-intro p {
     max-width: 34ch;
@@ -608,9 +631,10 @@ const DS_TOKENS = `
       linear-gradient(155deg,#08090c 0%,#101218 48%,#090a0e 100%) !important;
     color-scheme: dark;
   }
-  .flz-hub-root[data-theme="dark"] > .flz-orb-a { background: radial-gradient(closest-side,rgba(58,117,224,.38),transparent 72%) !important; }
-  .flz-hub-root[data-theme="dark"] > .flz-orb-b { background: radial-gradient(closest-side,rgba(193,67,111,.3),transparent 72%) !important; }
-  .flz-hub-root[data-theme="dark"] > .flz-orb-c { background: radial-gradient(closest-side,rgba(103,76,202,.3),transparent 72%) !important; }
+  .flz-hub-root[data-theme="dark"] .flz-orb-key { background: radial-gradient(closest-side,rgba(58,117,224,.44),transparent 70%); }
+  .flz-hub-root[data-theme="dark"] .flz-orb-bounce { background: radial-gradient(closest-side,rgba(193,67,111,.28),transparent 74%); }
+  /* Multiply would only muddy an already-dark ground; screen keeps the tooth. */
+  .flz-hub-root[data-theme="dark"] .flz-grain { mix-blend-mode: screen; opacity: .2; }
   .flz-hub-root[data-theme="dark"] .flz-slab {
     background: linear-gradient(145deg,rgba(23,25,31,.97),rgba(13,15,20,.95));
     border-color: rgba(255,255,255,.11);
@@ -748,12 +772,20 @@ const DS_TOKENS = `
     --flz-surface-secondary: #f5f5f7;
     --flz-surface-tertiary: #e8e8ed;
     --flz-separator: rgba(29, 29, 31, .14);
+    /* One glass recipe, three parts: a translucent fill, a slightly brighter
+       edge, and a single specular highlight along the top. Everything frosted
+       on this page uses these and nothing else. */
+    --flz-glass: rgba(255, 255, 255, .62);
+    --flz-glass-edge: rgba(255, 255, 255, .78);
+    --flz-glass-specular-top: rgba(255, 255, 255, .85);
     --flz-accent: #0066cc;
     --flz-focus: rgba(0, 113, 227, .72);
     --flz-radius-sm: 10px;
     --flz-radius-md: 16px;
     --flz-radius-lg: 20px;
-    background: #f5f5f7 !important;
+    /* Ground sits a few steps below the glass fill on purpose: white-on-white
+       cannot read as frosted, so the panels need something to be brighter than. */
+    background: linear-gradient(180deg,#f2f3f7 0%,#eaecf2 54%,#e2e4ec 100%) !important;
   }
   .flz-hub-root[data-theme="dark"] {
     --flz-text-primary: #f5f5f7;
@@ -763,15 +795,15 @@ const DS_TOKENS = `
     --flz-surface-secondary: #111113;
     --flz-surface-tertiary: #2c2c2e;
     --flz-separator: rgba(255, 255, 255, .14);
+    --flz-glass: rgba(30, 32, 39, .58);
+    --flz-glass-edge: rgba(255, 255, 255, .12);
+    --flz-glass-specular-top: rgba(255, 255, 255, .09);
     --flz-accent: #2997ff;
     --flz-focus: rgba(41, 151, 255, .82);
-    background: #0b0b0d !important;
+    background: linear-gradient(180deg,#0c0d10 0%,#101116 54%,#0a0b0e 100%) !important;
   }
-  .flz-orb {
-    opacity: .18 !important;
-    filter: blur(72px) !important;
-  }
-  .flz-hub-root[data-theme="dark"] .flz-orb { opacity: .14 !important; }
+  .flz-hub-root[data-theme="dark"] .flz-orb-key { opacity: .5; }
+  .flz-hub-root[data-theme="dark"] .flz-orb-bounce { opacity: .36; }
   .flz-content {
     width: min(100%, 1680px);
     margin-inline: auto;
@@ -794,11 +826,11 @@ const DS_TOKENS = `
     padding: 4px !important;
     gap: 2px !important;
     border-radius: 16px !important;
-    background: var(--flz-surface) !important;
-    border: 1px solid var(--flz-separator) !important;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, .07) !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
+    background: var(--flz-glass) !important;
+    border: 1px solid var(--flz-glass-edge) !important;
+    box-shadow: inset 0 1px 0 var(--flz-glass-specular-top), 0 4px 18px rgba(17, 19, 26, .08) !important;
+    backdrop-filter: blur(20px) saturate(165%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(165%) !important;
     animation: none !important;
   }
   .flz-rail > div:first-child { display: none !important; }
@@ -819,22 +851,24 @@ const DS_TOKENS = `
     width: 36px;
     height: 36px;
     border-radius: 10px;
-    background: var(--flz-surface) !important;
+    background: var(--flz-glass) !important;
     color: var(--flz-text-primary) !important;
-    border: 1px solid var(--flz-separator) !important;
-    box-shadow: none !important;
+    border: 1px solid var(--flz-glass-edge) !important;
+    box-shadow: inset 0 1px 0 var(--flz-glass-specular-top) !important;
+    backdrop-filter: blur(16px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(160%) !important;
   }
   .flz-theme-toggle {
     min-width: 0;
     height: 36px;
     padding: 0 12px 0 7px;
     border-radius: 11px;
-    background: var(--flz-surface) !important;
-    border: 1px solid var(--flz-separator) !important;
+    background: var(--flz-glass) !important;
+    border: 1px solid var(--flz-glass-edge) !important;
     color: var(--flz-text-primary) !important;
-    box-shadow: none !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
+    box-shadow: inset 0 1px 0 var(--flz-glass-specular-top) !important;
+    backdrop-filter: blur(18px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(160%) !important;
   }
   .flz-theme-toggle-icon {
     width: 22px;
@@ -896,9 +930,11 @@ const DS_TOKENS = `
     height: 88px !important;
     padding: 13px 14px !important;
     border-radius: 14px !important;
-    background: var(--flz-surface) !important;
-    border: 1px solid var(--flz-separator) !important;
-    box-shadow: none !important;
+    background: var(--flz-glass) !important;
+    border: 1px solid var(--flz-glass-edge) !important;
+    box-shadow: inset 0 1px 0 var(--flz-glass-specular-top), 0 4px 16px rgba(17, 19, 26, .06) !important;
+    backdrop-filter: blur(20px) saturate(165%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(165%) !important;
     animation: none !important;
   }
   .flz-main-area { gap: 20px !important; }
@@ -912,8 +948,13 @@ const DS_TOKENS = `
   .flz-featured,
   .flz-sidebar > * {
     border-radius: 18px !important;
-    border: 1px solid var(--flz-separator) !important;
-    box-shadow: none !important;
+    border: 1px solid var(--flz-glass-edge) !important;
+    box-shadow: inset 0 1px 0 var(--flz-glass-specular-top), 0 6px 22px rgba(17, 19, 26, .07) !important;
+  }
+  .flz-sidebar > * {
+    background: var(--flz-glass) !important;
+    backdrop-filter: blur(22px) saturate(165%) !important;
+    -webkit-backdrop-filter: blur(22px) saturate(165%) !important;
   }
   .flz-tile.flz-project-tile { background: #111113 !important; }
   .flz-project-media::after {
@@ -961,9 +1002,11 @@ const DS_TOKENS = `
   }
   .flz-empty-state {
     color: var(--flz-text-primary) !important;
-    background: var(--flz-surface) !important;
-    border: 1px solid var(--flz-separator) !important;
-    box-shadow: none !important;
+    background: var(--flz-glass) !important;
+    border: 1px solid var(--flz-glass-edge) !important;
+    box-shadow: inset 0 1px 0 var(--flz-glass-specular-top) !important;
+    backdrop-filter: blur(20px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
   }
   .flz-empty-state {
     grid-column: 1 / -1;
@@ -1118,6 +1161,10 @@ const DS_TOKENS = `
 const PROJECTS: { id: number; tools: string; title: string; cat: string; age: string; grad: string; link: string; img: string; body: string }[] = [];
 
 const CATEGORY_ORDER = ["Social", "Assets", "Characters", "Gameplay", "Automotive"];
+
+// Five, not six: the lead tile takes two columns so the grid has a focal point
+// instead of six interchangeable rectangles.
+const PROJECTS_PER_PAGE = 5;
 
 // ── Icon helpers ──────────────────────────────────────────────────────────────
 const IconGrid = () => (
@@ -1275,7 +1322,7 @@ function ContactCard() {
               {PUBLIC_CONTACT_ROWS.map(([label, value]) => (
                 <div key={label}>
                   <div style={{ font: `500 8.5px/1 var(--flz-font-mono)`, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--flz-text-muted)", marginBottom: 2 }}>{label}</div>
-                  <div style={{ font: `500 13px/1 var(--flz-font-display)`, color: "var(--flz-text-primary)" }}>{value}</div>
+                  <div style={{ font: `500 13px/1.25 var(--flz-font-sans)`, color: "var(--flz-text-primary)" }}>{value}</div>
                 </div>
               ))}
             </div>
@@ -1300,7 +1347,7 @@ function StatTile({ label, value, unit }: { label: string; value: string; unit?:
     <div className="flz-stat-tile" style={{ width: 100, height: 100 }}>
       <div style={{ font: `500 9.5px/1 var(--flz-font-mono)`, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--flz-text-muted)", marginBottom: 6 }}>{label}</div>
       <div style={{ display: "flex", alignItems: "flex-end", gap: 3 }}>
-        <span style={{ font: `500 24px/1 var(--flz-font-display)`, letterSpacing: "-.02em", color: "var(--flz-text-primary)" }}>{value}</span>
+        <span style={{ font: `500 23px/1 var(--flz-font-mono)`, letterSpacing: "-.03em", color: "var(--flz-text-primary)" }}>{value}</span>
         {unit && <span style={{ font: `500 12px/1 var(--flz-font-sans)`, color: "var(--flz-text-secondary)", marginBottom: 2 }}>{unit}</span>}
       </div>
     </div>
@@ -1369,15 +1416,17 @@ function DiscordCard({ url }: { url: string }) {
           </svg>
         </span>
         <div style={{ lineHeight: 1.2 }}>
-          <div style={{ font: `500 var(--flz-fs-body)/1 var(--flz-font-display)`, color: "var(--flz-text-primary)" }}>The Discord</div>
+          <div style={{ font: `400 18px/1.1 var(--flz-font-display)`, color: "var(--flz-text-primary)" }}>The Discord</div>
           <div style={{ font: `500 10px/1 var(--flz-font-mono)`, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--flz-text-muted)", marginTop: 4 }}>Feedback</div>
         </div>
       </div>
-      <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between" }}>
-        <span style={{ display: "inline-flex", alignItems: "flex-start", gap: 2 }}>
-          <span style={{ font: `500 40px/1 var(--flz-font-display)`, letterSpacing: "-.028em", color: "var(--flz-text-primary)" }}>soon</span>
+      <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 12 }}>
+        <span style={{ font: `400 13.5px/1.45 var(--flz-font-sans)`, color: "var(--flz-text-secondary)" }}>
+          {url
+            ? "Work-in-progress builds, and somewhere to tell me they're broken."
+            : "Opening once there's a build worth breaking. Not yet."}
         </span>
-        {url && <span className="flz-tile-arr" style={{ color: "var(--flz-text-primary)" }}><IconNE /></span>}
+        {url && <span className="flz-tile-arr" style={{ flexShrink: 0, color: "var(--flz-text-primary)" }}><IconNE /></span>}
       </div>
     </>
   );
@@ -1490,8 +1539,16 @@ function MainSlab({
   onThemeToggle: () => void;
 }) {
   const [projectPage, setProjectPage] = useState(0);
-  const pageCount = Math.max(1, Math.ceil(visibleProjects.length / 6));
+  const pageCount = Math.max(1, Math.ceil(visibleProjects.length / PROJECTS_PER_PAGE));
   const safeProjectPage = Math.min(projectPage, pageCount - 1);
+
+  const followers = settings.followers_count?.trim();
+  const wishlists = settings.wishlists_count?.trim();
+  const stats = [
+    { label: "Building since", value: daysBuilding, unit: "days" },
+    ...(followers ? [{ label: "Followers", value: followers, unit: undefined }] : []),
+    ...(wishlists ? [{ label: "Wishlists", value: wishlists, unit: undefined }] : []),
+  ];
 
   const slabStyle: React.CSSProperties = {
     position: "relative", flex: 1, minWidth: 0,
@@ -1504,13 +1561,19 @@ function MainSlab({
     flex: 1, minWidth: 0, minHeight: 0, overflow: "hidden", display: "flex", flexDirection: "column", gap: 14,
   };
 
-  const tiles = visibleProjects.slice(safeProjectPage * 6, safeProjectPage * 6 + 6);
+  const tiles = visibleProjects.slice(
+    safeProjectPage * PROJECTS_PER_PAGE,
+    safeProjectPage * PROJECTS_PER_PAGE + PROJECTS_PER_PAGE,
+  );
+  // A wide lead tile only reads as deliberate when there is a grid behind it to
+  // play against; below three tiles it just leaves a hole.
+  const leadSpans = tiles.length >= 3;
 
   return (
     <div className="flz-slab" style={slabStyle}>
       {/* Nav row */}
       <div className="flz-enter" style={{ display: "flex", alignItems: "center", gap: 20 }}>
-        <span style={{ font: `500 22px/1 var(--flz-font-display)`, letterSpacing: "-.04em", color: "var(--flz-text-primary)" }}>
+        <span style={{ font: `400 26px/1 var(--flz-font-display)`, letterSpacing: "-.005em", color: "var(--flz-text-primary)" }}>
           Flz<span style={{ color: "var(--flz-text-muted)" }}>.</span>works
         </span>
         <button
@@ -1532,26 +1595,36 @@ function MainSlab({
       </div>
 
       {/* Hero row */}
-      <div className="flz-enter flz-hero" style={{ "--flz-delay": "70ms", display: "flex", alignItems: "center", gap: 32, flexWrap: "wrap" } as React.CSSProperties}>
-        <div style={{ flex: "1 1 340px", minWidth: 0 }}>
-          {/* Headline, counters and the Discord link below are edited in /studio. */}
-          <h1 style={{ margin: 0, font: `500 clamp(2rem,1.4rem + 2.4vw,2.9rem)/0.98 var(--flz-font-display)`, letterSpacing: "-.032em", color: "var(--flz-text-primary)", whiteSpace: "pre-line" }}>
+      <div className="flz-enter flz-hero" style={{ "--flz-delay": "70ms", display: "flex", alignItems: "flex-end", gap: 32, flexWrap: "wrap" } as React.CSSProperties}>
+        <div style={{ flex: "1 1 420px", minWidth: 0 }}>
+          {/* Headline, sub-line, counters and the Discord link are edited in /studio. */}
+          <h1 style={{ margin: 0, font: `400 clamp(2.5rem,1.6rem + 3.3vw,4rem)/1.03 var(--flz-font-display)`, letterSpacing: "-.014em", color: "var(--flz-text-primary)", whiteSpace: "pre-line", textWrap: "balance" }}>
             {settings.hero_headline?.trim() || "Munca is now\nin development."}
           </h1>
+          <p style={{ margin: "14px 0 0", maxWidth: "48ch", font: `400 15px/1.55 var(--flz-font-sans)`, color: "var(--flz-text-secondary)" }}>
+            {settings.hero_subhead?.trim() ||
+              "I'm Bence. I model, rig and code the whole thing myself, out of Budapest. Everything below is in progress and gets posted as it happens."}
+          </p>
         </div>
-        <div className="flz-stats" style={{ flexShrink: 0, display: "flex", gap: 12 }}>
-          <StatTile label="Building since" value={daysBuilding} unit="days" />
-          <StatTile label="Followers" value={settings.followers_count?.trim() || "soon"} />
-          <StatTile label="Wishlists" value={settings.wishlists_count?.trim() || "soon"} />
-        </div>
+        {/* Only counters with a real number earn a tile. A grid of placeholders
+            reading "soon" is not a statistic, it is furniture. */}
+        {stats.length > 0 && (
+          <div className="flz-stats" style={{ flexShrink: 0, display: "flex", gap: 12 }}>
+            {stats.map(stat => (
+              <StatTile key={stat.label} label={stat.label} value={stat.value} unit={stat.unit} />
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Filter chips */}
+      {/* Filter chips — only once there is something to choose between */}
+      {filters.length > 2 && (
       <div className="flz-enter flz-filters" style={{ "--flz-delay": "140ms", display: "flex", gap: 9, alignItems: "center", flexWrap: "wrap" } as React.CSSProperties}>
         {filters.map(f => (
           <button key={f} type="button" aria-pressed={activeFilter === f && activeView === "projects"} className={`flz-chip${activeFilter === f && activeView === "projects" ? " active" : ""}`} onClick={() => { setProjectPage(0); setActiveFilter(f); setActiveView("projects"); }}>{f}</button>
         ))}
       </div>
+      )}
 
       {/* Main content: routing well + right column */}
       <div className="flz-enter flz-main-area" style={{ "--flz-delay": "200ms", flex: 1, minHeight: 0, display: "flex", gap: 18 } as React.CSSProperties}>
@@ -1561,20 +1634,22 @@ function MainSlab({
           {activeView === "message" ? <MessagePanel /> : (
             <div className="flz-view" style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column", gap: 14 }}>
               <div className="flz-pager-row" style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                <div style={{ flexShrink: 0, whiteSpace: "nowrap", font: `500 var(--flz-fs-label)/1 var(--flz-font-mono)`, letterSpacing: "var(--flz-ls-label)", textTransform: "uppercase", color: "var(--flz-text-muted)" }}>Recent projects</div>
-                <span style={{ flexShrink: 0, whiteSpace: "nowrap", font: `400 var(--flz-fs-body-sm)/1 var(--flz-font-sans)`, color: "var(--flz-text-secondary)" }}>Page {safeProjectPage + 1} of {pageCount}</span>
+                <div style={{ flexShrink: 0, whiteSpace: "nowrap", font: `500 14px/1 var(--flz-font-sans)`, letterSpacing: "-.005em", color: "var(--flz-text-primary)" }}>Recent work</div>
+                {pageCount > 1 && (
+                  <span style={{ flexShrink: 0, whiteSpace: "nowrap", font: `400 12px/1 var(--flz-font-mono)`, color: "var(--flz-text-muted)" }}>{safeProjectPage + 1}/{pageCount}</span>
+                )}
                 <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
                   <button className="flz-iconbtn glass" aria-label="Previous" disabled={safeProjectPage === 0} onClick={() => setProjectPage(Math.max(0, safeProjectPage - 1))}><IconArrow size={15} rotate /></button>
                   <button className="flz-iconbtn glass" aria-label="Next" disabled={safeProjectPage >= pageCount - 1} onClick={() => setProjectPage(Math.min(pageCount - 1, safeProjectPage + 1))}><IconArrow size={15} /></button>
                 </div>
               </div>
               <div className="flz-grid" style={{ flex: 1, minHeight: 0, display: "grid", gridTemplateColumns: "repeat(3,1fr)", gridTemplateRows: "1fr 1fr", gap: 12 }}>
-                {tiles.length === 0 && <div className="flz-empty-state">No published projects in this category yet.</div>}
-                {tiles.slice(0, 6).map((p, i) => (
+                {tiles.length === 0 && <div className="flz-empty-state" style={{ gridColumn: "1 / -1" }}>Nothing published here yet.</div>}
+                {tiles.map((p, i) => (
                   <div
                     key={`${activeFilter}-${p.title ? p.id : `empty${i}`}`}
-                    className="flz-tile-in"
-                    style={{ "--flz-delay": `${i * 45}ms`, display: "flex", minWidth: 0, minHeight: 0 } as React.CSSProperties}
+                    className={`flz-tile-in${i === 0 && leadSpans ? " flz-tile-lead" : ""}`}
+                    style={{ "--flz-delay": `${i * 45}ms`, display: "flex", minWidth: 0, minHeight: 0, gridColumn: i === 0 && leadSpans ? "span 2" : undefined } as React.CSSProperties}
                   >
                     <ProjectTile project={p as typeof PROJECTS[number]} />
                   </div>
@@ -1603,7 +1678,7 @@ function MainSlab({
               </span>
             </div>
             <div style={{ padding: "15px 16px 16px" }}>
-              <div style={{ font: `500 var(--flz-fs-h3)/1.1 var(--flz-font-display)`, letterSpacing: "var(--flz-ls-h3)", color: "var(--flz-text-primary)" }}>Pentagon Athaan 2026</div>
+              <div style={{ font: `400 22px/1.14 var(--flz-font-display)`, letterSpacing: "-.006em", color: "var(--flz-text-primary)" }}>Pentagon Athaan 2026</div>
               <div style={{ font: `400 var(--flz-fs-body-sm)/1.45 var(--flz-font-sans)`, color: "var(--flz-text-secondary)", marginTop: 7 }}>Preview the model</div>
             </div>
             <Link href="/autosalon" className="flz-featured-link" aria-label="Open Autosalon portfolio" />
@@ -1710,9 +1785,12 @@ export default function PortfolioHubPage() {
 
   const visibleProjects =
     activeFilter === "All" ? projectsList : projectsList.filter(p => p.cat === activeFilter);
+  // Only categories that actually hold something get a chip. CATEGORY_ORDER is
+  // an ordering preference, not a promise that all five exist — offering a
+  // filter that lands on an empty grid is chrome pretending to be content.
   const projectCategories = Array.from(new Set(projectsList.map((project) => project.cat.trim()).filter(Boolean)));
   const categories = [
-    ...CATEGORY_ORDER,
+    ...CATEGORY_ORDER.filter((category) => projectCategories.includes(category)),
     ...projectCategories.filter((category) => !CATEGORY_ORDER.includes(category)).sort((a, b) => a.localeCompare(b)),
   ];
   const filters = ["All", ...categories];
@@ -1725,16 +1803,22 @@ export default function PortfolioHubPage() {
     <div className="flz-hub-root" data-theme={theme} style={{
       minHeight: "100vh",
       position: "relative",
-      overflow: "hidden",
+      // Vertical overflow must stay scrollable: five project tiles plus the hero
+      // exceed a laptop viewport, and clipping them hid content outright.
+      overflowX: "hidden",
       background: "#100e0c",
       fontFamily: "var(--flz-font-sans), sans-serif",
     }}>
       <style dangerouslySetInnerHTML={{ __html: DS_TOKENS }} />
 
-      {/* Slow transform-only motion belongs to the page background, outside the slab. */}
-      <div className="flz-orb flz-orb-a" style={{ position: "absolute", top: "-8%", left: "-7%", width: 620, height: 440, borderRadius: "50%", animation: "flz-drift1 30s ease-in-out infinite", willChange: "transform", pointerEvents: "none" }} />
-      <div className="flz-orb flz-orb-b" style={{ position: "absolute", top: "25%", right: "-12%", width: 680, height: 500, borderRadius: "50%", animation: "flz-drift2 38s ease-in-out infinite", willChange: "transform", pointerEvents: "none" }} />
-      <div className="flz-orb flz-orb-c" style={{ position: "absolute", bottom: "-18%", left: "18%", width: 760, height: 520, borderRadius: "50%", animation: "flz-drift3 46s ease-in-out infinite", willChange: "transform", pointerEvents: "none" }} />
+      {/* One key light, parked above the headline, and a warm bounce off the
+          bottom-right to keep the glass from reading flat. Static on purpose:
+          the glass has something to refract without the page fidgeting. */}
+      <div className="flz-ambient" aria-hidden="true">
+        <div className="flz-orb flz-orb-key" />
+        <div className="flz-orb flz-orb-bounce" />
+        <div className="flz-grain" />
+      </div>
 
       {/* Admin Quick Editor Badge (Only visible when logged in as Admin) */}
       {isAdmin && (
