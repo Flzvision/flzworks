@@ -5,6 +5,11 @@ html, body {
 }
 
 html {
+  /* The strips iOS Safari paints behind the status bar and the bottom toolbar
+     come from the document canvas, not from the page wrapper. Pages publish
+     their own colour through <ThemeCanvas>; white stays the fallback so routes
+     that set nothing look exactly as they did before. */
+  background-color: var(--app-canvas, #ffffff);
   scroll-behavior: smooth;
   scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
   scrollbar-width: thin;
@@ -2395,7 +2400,9 @@ select[aria-invalid="true"] {
   --bp-border-dashed: 1px dashed rgba(220, 231, 245, 0.35);
   --bp-scrim: rgba(18, 40, 75, 0.75);
   min-height: 100vh;
-  padding-bottom: 56px;
+  /* Clears the fixed titleblock, plus the home-indicator strip that
+     viewport-fit=cover hands back to the page on iPhone. */
+  padding-bottom: calc(56px + env(safe-area-inset-bottom));
   background-color: var(--bp-bg);
   color: var(--bp-fg);
   font-family: var(--font-mono), monospace;
@@ -2414,7 +2421,8 @@ select[aria-invalid="true"] {
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  padding: 16px 32px;
+  padding: calc(16px + env(safe-area-inset-top)) max(32px, env(safe-area-inset-right)) 16px
+    max(32px, env(safe-area-inset-left));
   border-bottom: var(--bp-border-strong);
   background: var(--bp-bg);
   font-size: 11px;
@@ -2650,6 +2658,7 @@ select[aria-invalid="true"] {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-top: var(--bp-border-strong);
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .bp-titleblock-cell {
@@ -2780,7 +2789,8 @@ select[aria-invalid="true"] {
   .bp-topbar {
     flex-wrap: wrap;
     gap: 10px 0;
-    padding: 12px 16px;
+    padding: calc(12px + env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) 12px
+      max(16px, env(safe-area-inset-left));
   }
   .bp-nav {
     gap: 14px;
@@ -2811,6 +2821,14 @@ select[aria-invalid="true"] {
   }
   .bp-titleblock {
     grid-template-columns: 1fr 1fr;
+  }
+  /* Two rows of cells here rather than one, so the page and the FAB both need
+     to reserve more room above the fixed footer than they do on desktop. */
+  .bp-root {
+    padding-bottom: calc(112px + env(safe-area-inset-bottom));
+  }
+  .bp-id-fab {
+    bottom: calc(124px + env(safe-area-inset-bottom));
   }
   .bp-titleblock-cell:nth-child(2n) {
     border-right: 0;
@@ -2947,8 +2965,8 @@ select[aria-invalid="true"] {
 /* ===== Floating ID FAB ===== */
 .bp-id-fab {
   position: fixed;
-  left: 24px;
-  bottom: 80px;
+  left: max(24px, env(safe-area-inset-left));
+  bottom: calc(80px + env(safe-area-inset-bottom));
   z-index: 45;
   display: flex;
   align-items: center;

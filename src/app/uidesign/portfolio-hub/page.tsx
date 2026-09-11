@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ExternalEmbed } from "@/components/external-embed";
 import { LegalLinks } from "@/components/legal-links";
 import { TelemetryConsent } from "@/components/telemetry-consent";
+import { ThemeCanvas } from "@/components/theme-canvas";
 import { TELEMETRY_READY_EVENT, trackTelemetryEvent } from "@/lib/telemetry-client";
 import { PUBLIC_CONTACT_PROFILE, PUBLIC_CONTACT_QR_SRC, PUBLIC_CONTACT_ROWS } from "@/lib/public-contact-profile";
 
@@ -334,7 +335,11 @@ const DS_TOKENS = `
     /* Content wrapper: stack vertically, tight padding, room for bottom bar */
     .flz-content {
       flex-direction: column !important;
-      padding: 24px 16px 88px !important;
+      /* viewport-fit=cover hands the notch and the home-indicator strips back to
+         the page, so the insets have to be paid for here: the status bar at the
+         top, and the fixed rail plus the indicator at the bottom. */
+      padding: calc(24px + env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
+        calc(88px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)) !important;
       gap: 16px !important;
       min-height: 100vh;
       min-height: 100dvh;
@@ -1928,6 +1933,10 @@ export default function PortfolioHubPage() {
       fontFamily: "var(--flz-font-sans), sans-serif",
     }}>
       <style dangerouslySetInnerHTML={{ __html: DS_TOKENS }} />
+
+      {/* The page gradient lives on this wrapper, so iOS Safari would otherwise
+          tint its bars white. Hand it the top stop of whichever theme is on. */}
+      <ThemeCanvas color={theme === "dark" ? "#0c0d10" : "#f2f3f7"} colorScheme={theme} />
 
       {/* One key light, parked above the headline, and a warm bounce off the
           bottom-right to keep the glass from reading flat. Static on purpose:

@@ -9,6 +9,7 @@ import { Image as ImageIcon, X } from "lucide-react";
 import { ExternalEmbed } from "@/components/external-embed";
 import { LegalLinks } from "@/components/legal-links";
 import { TelemetryConsent } from "@/components/telemetry-consent";
+import { ThemeCanvas } from "@/components/theme-canvas";
 import { TELEMETRY_READY_EVENT, trackTelemetryEvent } from "@/lib/telemetry-client";
 import type { TelemetrySite } from "@/lib/telemetry";
 import { PUBLIC_CONTACT_PROFILE, PUBLIC_CONTACT_QR_SRC, PUBLIC_CONTACT_ROWS } from "@/lib/public-contact-profile";
@@ -263,6 +264,9 @@ export function PortfolioOnepager({ instagramMedia, articles, forceNamecardOpen 
 
   return (
     <div className="bp-root min-h-screen selection:bg-[#ffd166]/20 selection:text-[#ffd166]">
+      {/* --bp-bg, so iOS Safari carries the blueprint navy into the status bar
+          and the bottom toolbar instead of banding the page with white. */}
+      <ThemeCanvas color="#12284b" colorScheme="dark" />
       <TelemetryConsent site={telemetrySite} />
       {/* Header */}
       <header className={`bp-topbar ${uiHidden ? "hidden" : ""}`} style={{ display: uiHidden ? 'none' : 'flex' }}>

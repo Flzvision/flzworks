@@ -96,8 +96,11 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 0 24px;
-  height: 62px;
+  /* The status bar overlaps the page under viewport-fit=cover, so the bar grows
+     by the inset rather than sliding its contents underneath the notch. */
+  padding: env(safe-area-inset-top) max(24px, env(safe-area-inset-right)) 0
+    max(24px, env(safe-area-inset-left));
+  height: calc(62px + env(safe-area-inset-top));
   background: rgba(16, 14, 12, 0.82);
   backdrop-filter: blur(20px) saturate(160%);
   -webkit-backdrop-filter: blur(20px) saturate(160%);
