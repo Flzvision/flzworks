@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { getLocale } from "@/lib/i18n-server";
@@ -31,6 +31,22 @@ export const metadata: Metadata = {
   },
   description:
     "Portfolio of Bence Flosz — Gazdaságinformatikus (BGE), Indie Game Developer, 3D Artist, and Backend Developer based in Budapest.",
+};
+
+// iOS Safari paints the area behind the status bar and the bottom toolbar with
+// the document background, and tints those bars from <meta name="theme-color">.
+// Without viewport-fit=cover the page stops at the safe-area edges and those
+// strips render white, which broke every dark page on iPhone. Each page keeps
+// its own colour in sync through <ThemeCanvas>; these are the fallbacks used
+// before hydration and on routes that don't set one.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f2f3f7" },
+    { media: "(prefers-color-scheme: dark)", color: "#08090c" },
+  ],
 };
 
 export default async function RootLayout({
