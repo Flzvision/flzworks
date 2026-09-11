@@ -46,7 +46,7 @@ describe("live social pulse", () => {
     process.env.INSTAGRAM_USER_ID = "123";
     process.env.INSTAGRAM_API_VERSION = "v23.0";
     const fetchMock = vi.fn()
-      .mockResolvedValueOnce(new Response(JSON.stringify({ followers_count: 1200 }), { status: 200 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ followers_count: 1200, media_count: 48 }), { status: 200 }))
       .mockResolvedValueOnce(new Response(JSON.stringify({ data: [
         { like_count: 20 },
         { like_count: 30 },
@@ -60,6 +60,7 @@ describe("live social pulse", () => {
       platform: "instagram",
       followers: 1200,
       likes: 50,
+      posts: 48,
       status: "live",
       error: null,
     });

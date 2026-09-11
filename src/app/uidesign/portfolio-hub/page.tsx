@@ -434,7 +434,7 @@ const DS_TOKENS = `
     .flz-pager-row .flz-iconbtn.glass { width: 28px !important; height: 28px !important; }
     /* ContactCard internals: stack on mobile */
     .flz-contact-inner { flex-direction: column !important; }
-    .flz-contact-qr { width: 100% !important; flex-direction: row !important; padding: 10px 14px !important; border-radius: 12px !important; }
+    .flz-contact-qr { width: 180px !important; height: 180px !important; align-self: center !important; }
   }
 
   /* HIG-inspired visual skin. Structure and responsive layout stay intact. */
@@ -538,74 +538,68 @@ const DS_TOKENS = `
     border: 1px solid rgba(29,29,31,.14);
     box-shadow: 0 24px 64px rgba(37,39,46,.22);
   }
-  .flz-id-card {
-    background: #fff !important;
-    border-color: rgba(29,29,31,.14) !important;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 12px 28px rgba(37,39,46,.1) !important;
-  }
+  /* Same glass surface as the sidebar cards. Fills the project-grid area; the
+     message box takes up the spare height so there is no dead space. */
   .flz-message-panel {
     flex: 1;
     min-height: 0;
-    display: grid;
-    grid-template-columns: minmax(210px,.72fr) minmax(320px,1.28fr);
-    gap: 24px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
     padding: 28px;
     box-sizing: border-box;
-    border: 1px solid #781d30;
-    border-radius: 28px;
-    background: linear-gradient(145deg,#4a0f1b 0%,#26070e 100%);
-    box-shadow: inset 0 1px 0 rgba(255,235,238,.12), 0 18px 48px rgba(72,8,24,.22);
-  }
-  .flz-message-intro { display: flex; flex-direction: column; align-items: flex-start; }
-  .flz-message-kicker,
-  .flz-message-form label > span {
-    color: #f3b6c0;
-    font: 600 9.5px/1 var(--flz-font-mono);
-    letter-spacing: .09em;
-    text-transform: uppercase;
+    border-radius: 18px;
+    border: 1px solid var(--flz-glass-edge);
+    background: var(--flz-glass);
+    box-shadow: inset 0 1px 0 var(--flz-glass-specular-top), 0 6px 22px rgba(17, 19, 26, .07);
+    backdrop-filter: blur(22px) saturate(165%);
+    -webkit-backdrop-filter: blur(22px) saturate(165%);
   }
   .flz-message-intro h2 {
-    margin: 18px 0 10px;
-    color: #fff8f8;
-    font: 400 clamp(2.1rem,3.4vw,3.5rem)/1.02 var(--flz-font-display);
-    letter-spacing: -.012em;
+    margin: 0;
+    color: var(--flz-text-primary);
+    font: 400 clamp(28px, 2.6vw, 38px)/1.08 var(--flz-font-display);
+    letter-spacing: -.01em;
   }
   .flz-message-intro p {
-    max-width: 34ch;
-    margin: 0;
-    color: rgba(255,238,241,.76);
-    font: 400 14px/1.55 var(--flz-font-sans);
+    margin: 6px 0 0;
+    color: var(--flz-text-secondary);
+    font: 400 13.5px/1.45 var(--flz-font-sans);
   }
-  .flz-message-form { display: flex; min-width: 0; flex-direction: column; gap: 16px; }
-  .flz-message-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .flz-message-form label { display: flex; min-width: 0; flex-direction: column; gap: 8px; }
+  .flz-message-form { flex: 1; min-height: 0; display: flex; min-width: 0; flex-direction: column; gap: 14px; }
+  .flz-message-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .flz-message-form > label { flex: 1; min-height: 0; }
+  .flz-message-form label { display: flex; min-width: 0; flex-direction: column; gap: 5px; }
+  .flz-message-form label > span { color: var(--flz-text-secondary); font: 500 12px/1 var(--flz-font-sans); }
   .flz-message-form input,
   .flz-message-form textarea {
     width: 100%;
     box-sizing: border-box;
-    border: 1px solid rgba(255,216,223,.22);
-    border-radius: 14px;
-    background: rgba(20,2,7,.42);
-    color: #fff8f8;
+    border: 1px solid var(--flz-separator);
+    border-radius: 12px;
+    background: rgba(255,255,255,.72);
+    color: var(--flz-text-primary);
     font: 400 14px/1.4 var(--flz-font-sans);
-    transition: border-color .18s, box-shadow .18s, background .18s;
+    transition: border-color .18s, box-shadow .18s;
   }
   .flz-message-form input { height: 46px; padding: 0 14px; }
-  .flz-message-form textarea { min-height: 128px; flex: 1; padding: 13px 14px; resize: vertical; }
+  .flz-message-form textarea { flex: 1; min-height: 160px; padding: 13px 14px; resize: none; }
   .flz-message-form input::placeholder,
-  .flz-message-form textarea::placeholder { color: rgba(255,226,231,.48); }
+  .flz-message-form textarea::placeholder { color: var(--flz-text-muted); }
   .flz-message-form input:focus,
   .flz-message-form textarea:focus {
     outline: none;
-    border-color: #ffb5c1;
-    box-shadow: 0 0 0 4px rgba(255,181,193,.16);
+    border-color: var(--flz-focus);
+    box-shadow: 0 0 0 3px rgba(0, 113, 227, .16);
   }
-  .flz-message-action { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
-  .flz-message-action .flz-btn-solid { min-height: 42px; flex-shrink: 0; background: #fff4f5; color: #4a0f1b; box-shadow: 0 10px 24px rgba(20,2,7,.28); }
+  .flz-message-action { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 2px; }
+  .flz-message-action .flz-btn-solid { min-height: 40px; flex-shrink: 0; }
   .flz-message-action .flz-btn-solid:disabled { opacity: .55; cursor: wait; }
-  .flz-message-status { color: rgba(255,231,235,.66); font: 400 11px/1.35 var(--flz-font-sans); }
-  .flz-message-status.success { color: #b9f6c8; }
-  .flz-message-status.error { color: #ffd1d8; }
+  .flz-message-status { margin: 0; color: var(--flz-text-muted); font: 400 11.5px/1.4 var(--flz-font-sans); }
+  .flz-message-status a { color: inherit; text-decoration: underline; }
+  .flz-message-status.success { color: #1f8a4c; }
+  .flz-message-status.error { color: #c4314b; }
   .flz-footer {
     display: flex;
     align-items: center;
@@ -616,6 +610,16 @@ const DS_TOKENS = `
     font: 500 10px/1.3 var(--flz-font-mono);
     letter-spacing: .025em;
   }
+  .flz-footer-social { display: flex; align-items: center; gap: 2px; }
+  .flz-footer-social a {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 8px;
+    color: var(--flz-text-muted);
+    transition: color .15s ease, background-color .15s ease;
+  }
+  .flz-footer-social a:hover { color: var(--flz-text-primary); background: rgba(127,127,127,.12); }
+  .flz-footer-social a:focus-visible { outline: 2px solid var(--flz-text-primary); outline-offset: 1px; }
+  .flz-footer-social svg { width: 15px; height: 15px; }
 
   /* Purpose-built dark theme: warm graphite surfaces with cool ambient color. */
   .flz-hub-root[data-theme="dark"] {
@@ -678,6 +682,18 @@ const DS_TOKENS = `
   .flz-hub-root[data-theme="dark"] .flz-iconbtn { color: #f5f5f7; }
   .flz-hub-root[data-theme="dark"] .flz-iconbtn.ghost { background: rgba(255,255,255,.06); }
   .flz-hub-root[data-theme="dark"] .flz-iconbtn.solid { background: #f5f5f7; color: #111216; }
+  /* A white active tile glares on the dark rail; a raised tint reads as selected without it. */
+  .flz-hub-root[data-theme="dark"] .flz-rail .flz-iconbtn.solid {
+    background: rgba(255,255,255,.16) !important;
+    color: #fff !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.12) !important;
+  }
+  .flz-hub-root[data-theme="dark"] [data-embed-play] {
+    background: rgba(255,255,255,.14) !important;
+    border: 1px solid rgba(255,255,255,.16) !important;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
   .flz-hub-root[data-theme="dark"] .flz-iconbtn.glass {
     background: rgba(255,255,255,.08);
     border-color: rgba(255,255,255,.13);
@@ -696,21 +712,10 @@ const DS_TOKENS = `
     border-color: rgba(255,255,255,.14);
     box-shadow: 0 28px 72px rgba(0,0,0,.52);
   }
-  .flz-hub-root[data-theme="dark"] .flz-id-card {
-    background: #1b1d23 !important;
-    border-color: rgba(255,255,255,.13) !important;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 14px 32px rgba(0,0,0,.3) !important;
-  }
-  .flz-hub-root[data-theme="dark"] .flz-message-panel {
-    border-color: #8e2439;
-    background: linear-gradient(145deg,#4a0f1b 0%,#22060c 100%);
-    box-shadow: inset 0 1px 0 rgba(255,235,238,.1), 0 18px 48px rgba(0,0,0,.34);
-  }
   .flz-hub-root[data-theme="dark"] .flz-message-form input,
-  .flz-hub-root[data-theme="dark"] .flz-message-form textarea {
-    border-color: rgba(255,216,223,.22);
-    background: rgba(20,2,7,.42);
-  }
+  .flz-hub-root[data-theme="dark"] .flz-message-form textarea { background: rgba(0,0,0,.28); }
+  .flz-hub-root[data-theme="dark"] .flz-message-status.success { color: #7ee2a3; }
+  .flz-hub-root[data-theme="dark"] .flz-message-status.error { color: #ff8fa3; }
 
   /* Motion layer: transform/opacity only, so the preserved layout never shifts. */
   @keyframes flz-shell-in {
@@ -982,7 +987,7 @@ const DS_TOKENS = `
     letter-spacing: .02em;
     color: rgba(255,255,255,.74);
   }
-  .flz-sidebar { width: 300px !important; gap: 12px !important; }
+  .flz-sidebar { width: 360px !important; gap: 12px !important; }
   .flz-badge {
     border-radius: 8px;
     background: rgba(12,12,14,.78) !important;
@@ -990,16 +995,6 @@ const DS_TOKENS = `
     letter-spacing: .04em;
   }
   .flz-featured { position: relative; }
-  .flz-featured-link {
-    position: absolute;
-    inset: 0;
-    z-index: 5;
-    border-radius: inherit;
-  }
-  .flz-featured-link:focus-visible {
-    outline: 3px solid var(--flz-focus);
-    outline-offset: 3px;
-  }
   .flz-empty-state {
     color: var(--flz-text-primary) !important;
     background: var(--flz-glass) !important;
@@ -1037,7 +1032,6 @@ const DS_TOKENS = `
   @media (max-width: 900px) {
     .flz-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
     .flz-sidebar { width: 100% !important; }
-    .flz-message-panel { grid-template-columns: 1fr; }
   }
   @media (max-width: 640px) {
     .flz-content { padding: 16px 14px 86px !important; }
@@ -1061,13 +1055,37 @@ const DS_TOKENS = `
       min-height: 82px;
       padding-inline: 10px !important;
     }
+    /* A single counter fits beside the headline: scale both down into one row.
+       With more than one counter the stacked layout above still applies. */
+    .flz-hero:not(:has(.flz-stats > :nth-child(2))) {
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
+      align-items: center !important;
+      gap: 12px !important;
+    }
+    .flz-hero:not(:has(.flz-stats > :nth-child(2))) > :first-child { flex: 1 1 auto !important; min-width: 0; }
+    .flz-hero:not(:has(.flz-stats > :nth-child(2))) h1 { font-size: clamp(1.7rem, 8.4vw, 2.5rem) !important; }
+    .flz-hero:not(:has(.flz-stats > :nth-child(2))) .flz-stats { width: auto; flex: none !important; }
+    .flz-hero:not(:has(.flz-stats > :nth-child(2))) .flz-stat-tile {
+      flex: none !important;
+      box-sizing: border-box;
+      width: 88px !important;
+      height: 76px !important;
+      min-height: 0;
+      padding: 9px 10px !important;
+    }
+    .flz-hero:not(:has(.flz-stats > :nth-child(2))) .flz-stat-tile > :first-child { font-size: 8.5px !important; }
+    .flz-hero:not(:has(.flz-stats > :nth-child(2))) .flz-stat-tile > :last-child > :first-child { font-size: 19px !important; }
     .flz-grid { grid-template-columns: 1fr !important; grid-auto-rows: minmax(300px, auto) !important; }
     .flz-project-tile { min-height: 330px !important; }
     .flz-theme-toggle { min-height: 44px; }
+    /* Icon only on phones; the button keeps its aria-label. */
+    .flz-theme-toggle { width: 44px; padding: 0 !important; justify-content: center; }
+    .flz-theme-toggle > span:not(.flz-theme-toggle-icon) { display: none; }
     .flz-autosalon-cta { min-height: 44px; padding-inline: 11px; }
     .flz-chip { min-height: 44px; }
     .flz-iconbtn { min-width: 44px; min-height: 44px; }
-    .flz-message-panel { padding: 20px; border-radius: 18px; }
+    .flz-message-panel { padding: 18px; flex: none; }
     .flz-message-fields { grid-template-columns: 1fr; }
     .flz-message-action { align-items: stretch; flex-direction: column; }
     .flz-message-action .flz-btn-solid { width: 100%; justify-content: center; }
@@ -1277,12 +1295,6 @@ function IconRail({ contactOpen, setContactOpen, activeView, setActiveView }: {
     <div className="flz-rail" style={railStyle}>
       <div style={{ position: "absolute", inset: 0, borderRadius: "inherit", pointerEvents: "none", background: "linear-gradient(180deg,rgba(255,255,255,.24) 0%,rgba(255,255,255,0) 14%),linear-gradient(0deg,rgba(255,255,255,.14) 0%,rgba(255,255,255,0) 12%)" }} />
       <span className="flz-railbtn"><button className={`flz-iconbtn ${activeView === "projects" ? "solid" : "ghost"}`} type="button" aria-label="Show projects" aria-pressed={activeView === "projects"} onClick={() => setActiveView("projects")}><IconGrid /></button></span>
-      <span className="flz-railbtn">
-        <a className="flz-iconbtn ghost" href="https://www.instagram.com/vision.flz/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" onClick={() => trackTelemetryEvent("social_open", "main", "instagram")}><IconInstagram /></a>
-      </span>
-      <span className="flz-railbtn">
-        <a className="flz-iconbtn ghost" href="https://www.tiktok.com/@vision.flz" target="_blank" rel="noopener noreferrer" aria-label="TikTok" onClick={() => trackTelemetryEvent("social_open", "main", "tiktok")}><IconTikTok /></a>
-      </span>
       <span className="flz-railbtn"><button className={`flz-iconbtn ${activeView === "message" ? "solid" : "ghost"}`} type="button" aria-label="Message me" aria-pressed={activeView === "message"} onClick={() => setActiveView("message")}><IconMessage /></button></span>
       <span className="flz-railbtn"><button className={`flz-iconbtn ${contactOpen ? "solid" : "ghost"}`} type="button" aria-label="Open ID card" aria-expanded={contactOpen} aria-controls="flz-id-card-dialog" onClick={() => setContactOpen(!contactOpen)}><IconIdCard /></button></span>
     </div>
@@ -1308,11 +1320,10 @@ function ContactCard() {
 
   return (
     <div className="flz-contact-card" style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column", gap: 14, overflow: "hidden", padding: 18, borderRadius: 24 }}>
-      <div style={{ font: `500 9.5px/1 var(--flz-font-mono)`, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--flz-text-muted)" }}>Contact</div>
-      <div className="flz-contact-inner" style={{ display: "flex", gap: 14, flex: 1, minHeight: 0 }}>
-        {/* ID Card */}
-        <div className="flz-id-card" style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 0, padding: "18px 20px", borderRadius: 20, border: "1px solid rgba(255,255,255,.14)" }}>
-          <div style={{ font: `500 9px/1 var(--flz-font-mono)`, letterSpacing: ".1em", textTransform: "uppercase", color: "rgba(255,196,88,.8)", borderBottom: "1px solid rgba(255,255,255,.1)", paddingBottom: 12, marginBottom: 16 }}>FLZ WORKS // IDENTITY CARD</div>
+      <div className="flz-contact-inner" style={{ display: "flex", gap: 18, flex: 1, minHeight: 0 }}>
+        {/* ID Card — sits directly on the dialog surface, no nested card. */}
+        <div className="flz-id-card" style={{ flex: "1 1 0", minWidth: 0, display: "flex", flexDirection: "column", gap: 0, padding: "4px 2px" }}>
+          <div style={{ font: `500 9.5px/1 var(--flz-font-mono)`, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--flz-text-muted)", borderBottom: "1px solid var(--flz-separator)", paddingBottom: 12, marginBottom: 16 }}>Contact</div>
           <div style={{ display: "flex", gap: 16, alignItems: "flex-start", flex: 1 }}>
             <div style={{ width: 72, height: 88, borderRadius: 12, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.12)", overflow: "hidden", flexShrink: 0 }}>
               {/* eslint-disable-next-line @next/next/no-img-element -- fixed-size contact portrait */}
@@ -1321,21 +1332,23 @@ function ContactCard() {
             <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
               {PUBLIC_CONTACT_ROWS.map(([label, value]) => (
                 <div key={label}>
-                  <div style={{ font: `500 8.5px/1 var(--flz-font-mono)`, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--flz-text-muted)", marginBottom: 2 }}>{label}</div>
+                  <div style={{ font: `500 9.5px/1 var(--flz-font-mono)`, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--flz-text-muted)", marginBottom: 3 }}>{label}</div>
                   <div style={{ font: `500 13px/1.25 var(--flz-font-sans)`, color: "var(--flz-text-primary)" }}>{value}</div>
                 </div>
               ))}
             </div>
           </div>
-          <button onClick={downloadVCard} style={{ marginTop: 18, width: "100%", padding: "10px 0", background: "rgba(255,196,88,.15)", border: "1px solid rgba(255,196,88,.3)", borderRadius: 12, cursor: "pointer", font: `700 9px/1 var(--flz-font-mono)`, letterSpacing: ".1em", textTransform: "uppercase", color: "rgba(255,196,88,.9)", transition: "background .14s" }}
+          <button onClick={downloadVCard} style={{ marginTop: 18, width: "100%", padding: "10px 0", background: "rgba(255,196,88,.15)", border: "1px solid rgba(255,196,88,.3)", borderRadius: 12, cursor: "pointer", font: `600 9.5px/1 var(--flz-font-mono)`, letterSpacing: ".08em", textTransform: "uppercase", color: "rgba(255,196,88,.9)", transition: "background .14s" }}
             onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,196,88,.25)")}
             onMouseLeave={e => (e.currentTarget.style.background = "rgba(255,196,88,.15)")}
           >[ Download vCard ]</button>
         </div>
         {/* QR */}
-        <div className="flz-contact-qr" style={{ flexShrink: 0, width: 120, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10, padding: 12, borderRadius: 20, background: "#fff" }}>
+        {/* QR fills the full height of the card; the white ground is kept only so it scans in dark mode. */}
+        {/* Stretches to the ID card's height; 248px wide keeps it roughly square at that height. */}
+        <div className="flz-contact-qr" style={{ flexShrink: 0, width: 248, alignSelf: "stretch", padding: 8, boxSizing: "border-box", borderRadius: 14, background: "#fff" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={PUBLIC_CONTACT_QR_SRC} alt="QR code linking to flz.works" width={200} height={200} style={{ display: "block", width: "100%", height: "auto" }} />
+          <img src={PUBLIC_CONTACT_QR_SRC} alt="QR code linking to flz.works" width={200} height={200} style={{ display: "block", width: "100%", height: "100%", objectFit: "contain" }} />
         </div>
       </div>
     </div>
@@ -1410,21 +1423,13 @@ function DiscordCard({ url }: { url: string }) {
   const inner = (
     <>
       <div style={{ display: "flex", alignItems: "center", gap: 11 }}>
-        <span style={{ width: 38, height: 38, borderRadius: 12, background: "#5865F2", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-          <svg width="21" height="21" viewBox="0 0 24 24" fill="#fff" aria-hidden="true">
-            <path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515c-.074.136-.1.279-.138.426a18.27 18.27 0 0 0-5.487 0 16.58 16.58 0 0 1 .143-.426A19.74 19.74 0 0 0 5.065 4.37C2.116 8.743 1.318 13.579 1.736 18.057a19.9 19.9 0 0 0 5.993 3.03 14.09 14.09 0 0 0 1.455-2.366 12.93 12.93 0 0 1-2.285-1.098c.191-.14.378-.287.559-.437 4.412 2.041 9.193 2.041 13.552 0 .182.15.369.297.56.437a12.9 12.9 0 0 1-2.29 1.1 14.1 14.1 0 0 0 1.455 2.366 19.88 19.88 0 0 0 6.002-3.031c.49-5.177-.838-9.674-3.548-13.688ZM8.02 15.331c-1.326 0-2.421-1.207-2.421-2.694s1.071-2.694 2.421-2.694c1.361 0 2.445 1.216 2.421 2.694 0 1.487-1.071 2.694-2.421 2.694Zm7.974 0c-1.326 0-2.421-1.207-2.421-2.694s1.071-2.694 2.421-2.694c1.361 0 2.445 1.216 2.421 2.694 0 1.487-1.06 2.694-2.421 2.694Z"/>
-          </svg>
-        </span>
-        <div style={{ lineHeight: 1.2 }}>
-          <div style={{ font: `400 18px/1.1 var(--flz-font-display)`, color: "var(--flz-text-primary)" }}>The Discord</div>
-          <div style={{ font: `500 10px/1 var(--flz-font-mono)`, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--flz-text-muted)", marginTop: 4 }}>Feedback</div>
-        </div>
+        <div style={{ font: `400 18px/1.1 var(--flz-font-display)`, color: "var(--flz-text-primary)" }}>The Discord</div>
       </div>
       <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 12 }}>
         <span style={{ font: `400 13.5px/1.45 var(--flz-font-sans)`, color: "var(--flz-text-secondary)" }}>
           {url
             ? "Work-in-progress builds, and somewhere to tell me they're broken."
-            : "Opening once there's a build worth breaking. Not yet."}
+            : "soon"}
         </span>
         {url && <span className="flz-tile-arr" style={{ flexShrink: 0, color: "var(--flz-text-primary)" }}><IconNE /></span>}
       </div>
@@ -1439,6 +1444,89 @@ function DiscordCard({ url }: { url: string }) {
       className="flz-tile"
       style={cardStyle}
       onClick={() => trackTelemetryEvent("social_open", "main", "discord")}
+    >
+      {inner}
+    </a>
+  ) : (
+    <div style={cardStyle}>{inner}</div>
+  );
+}
+
+type SocialStat = {
+  platform: "instagram" | "tiktok";
+  followers: number | null;
+  posts: number | null;
+  live: boolean;
+};
+
+const compactNumber = new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 });
+
+const SOCIAL_CARDS = {
+  instagram: {
+    title: "Instagram",
+    url: "https://www.instagram.com/vision.flz/",
+    postsLabel: "posts",
+  },
+  tiktok: {
+    title: "TikTok",
+    url: "https://www.tiktok.com/@vision.flz",
+    postsLabel: "videos",
+  },
+  youtube: {
+    title: "YouTube",
+    // No channel yet: the card renders without a link and reads "soon".
+    url: "",
+    postsLabel: "videos",
+  },
+} as const;
+
+function SocialStatsCard({ platform, stat }: { platform: keyof typeof SOCIAL_CARDS; stat: SocialStat | undefined }) {
+  const card = SOCIAL_CARDS[platform];
+  const cardStyle: React.CSSProperties = {
+    flexShrink: 0, padding: 18, borderRadius: 28,
+    display: "flex", flexDirection: "column", gap: 14,
+    textDecoration: "none", color: "inherit",
+  };
+  const figure = (value: number | null | undefined, label: string) => (
+    <span style={{ display: "inline-flex", alignItems: "baseline", gap: 5 }}>
+      <span style={{ font: `500 17px/1 var(--flz-font-mono)`, letterSpacing: "-.02em", color: "var(--flz-text-primary)" }}>
+        {typeof value === "number" ? compactNumber.format(value) : "—"}
+      </span>
+      <span style={{ font: `400 13px/1 var(--flz-font-sans)`, color: "var(--flz-text-secondary)" }}>{label}</span>
+    </span>
+  );
+
+  const inner = (
+    <>
+      <div style={{ display: "flex", alignItems: "center", gap: 11 }}>
+        <div style={{ font: `400 18px/1.1 var(--flz-font-display)`, color: "var(--flz-text-primary)" }}>{card.title}</div>
+        {stat?.live && (
+          <span title="Live from the platform API" style={{ marginLeft: "auto", width: 7, height: 7, borderRadius: 999, background: "#34c759", boxShadow: "0 0 0 3px rgba(52,199,89,.18)" }} />
+        )}
+      </div>
+      <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 12 }}>
+        {card.url ? (
+          <span style={{ display: "flex", flexWrap: "wrap", gap: "6px 18px" }}>
+            {figure(stat?.followers, "followers")}
+            {figure(stat?.posts, card.postsLabel)}
+          </span>
+        ) : (
+          <span style={{ font: `400 13.5px/1.45 var(--flz-font-sans)`, color: "var(--flz-text-secondary)" }}>soon</span>
+        )}
+        {card.url && <span className="flz-tile-arr" style={{ flexShrink: 0, color: "var(--flz-text-primary)" }}><IconNE /></span>}
+      </div>
+    </>
+  );
+
+  return card.url ? (
+    <a
+      href={card.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flz-tile"
+      style={cardStyle}
+      aria-label={`${card.title}: ${stat?.followers ?? "unknown"} followers, ${stat?.posts ?? "unknown"} ${card.postsLabel}`}
+      onClick={() => trackTelemetryEvent("social_open", "main", platform)}
     >
       {inner}
     </a>
@@ -1479,33 +1567,30 @@ function MessagePanel() {
   return (
     <section className="flz-message-panel flz-view" aria-labelledby="flz-message-title">
       <div className="flz-message-intro">
-        <div className="flz-message-kicker">Direct contact</div>
         <h2 id="flz-message-title">Have a project in mind?</h2>
-        <p>Send a short note about the work, timeline, or collaboration. I’ll reply directly by email.</p>
+        <p>Send a short note. I’ll reply by email.</p>
       </div>
       <form className="flz-message-form" onSubmit={sendMessage}>
         <div className="flz-message-fields">
           <label>
-            <span>Name (optional)</span>
+            <span>Name <span style={{ color: "var(--flz-text-muted)" }}>(optional)</span></span>
             <input value={name} onChange={(event) => setName(event.target.value)} autoComplete="name" maxLength={100} placeholder="Your name" />
           </label>
           <label>
-            <span>Email (required)</span>
+            <span>Email</span>
             <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" maxLength={100} placeholder="you@example.com" required />
           </label>
         </div>
         <label>
-          <span>Message (required)</span>
+          <span>Message</span>
           <textarea value={message} onChange={(event) => setMessage(event.target.value)} maxLength={5000} placeholder="Tell me what you’re building…" required />
         </label>
-        <p className="flz-message-status">
-          Your email, message and optional name are stored only to reply to you.{" "}
-          <Link href="/privacy#data" style={{ color: "#fff4f5", textDecoration: "underline" }}>Privacy policy</Link>
-        </p>
         <div className="flz-message-action">
-          <span className={`flz-message-status ${status}`} role="status" aria-live="polite">
-            {status === "success" ? "Message sent — thank you." : status === "error" ? error : ""}
-          </span>
+          <p className={`flz-message-status ${status}`} role="status" aria-live="polite">
+            {status === "success" ? "Message sent — thank you." : status === "error" ? error : (
+              <>Stored only to reply to you. <Link href="/privacy#data">Privacy policy</Link></>
+            )}
+          </p>
           <button className="flz-btn-solid" type="submit" disabled={status === "sending"}>
             {status === "sending" ? "Sending…" : "Send message"}
           </button>
@@ -1526,6 +1611,7 @@ function MainSlab({
   setActiveView,
   theme,
   onThemeToggle,
+  socialStats,
 }: {
   daysBuilding: string;
   settings: Record<string, string>;
@@ -1537,6 +1623,7 @@ function MainSlab({
   setActiveView: (view: MainView) => void;
   theme: Theme;
   onThemeToggle: () => void;
+  socialStats: SocialStat[];
 }) {
   const [projectPage, setProjectPage] = useState(0);
   const pageCount = Math.max(1, Math.ceil(visibleProjects.length / PROJECTS_PER_PAGE));
@@ -1601,10 +1688,12 @@ function MainSlab({
           <h1 style={{ margin: 0, font: `400 clamp(2.5rem,1.6rem + 3.3vw,4rem)/1.03 var(--flz-font-display)`, letterSpacing: "-.014em", color: "var(--flz-text-primary)", whiteSpace: "pre-line", textWrap: "balance" }}>
             {settings.hero_headline?.trim() || "Munca is now\nin development."}
           </h1>
-          <p style={{ margin: "14px 0 0", maxWidth: "48ch", font: `400 15px/1.55 var(--flz-font-sans)`, color: "var(--flz-text-secondary)" }}>
-            {settings.hero_subhead?.trim() ||
-              "I'm Bence. I model, rig and code the whole thing myself, out of Budapest. Everything below is in progress and gets posted as it happens."}
-          </p>
+          {/* No fallback copy: an empty sub-line in /studio hides the paragraph. */}
+          {settings.hero_subhead?.trim() && (
+            <p style={{ margin: "14px 0 0", maxWidth: "48ch", font: `400 15px/1.55 var(--flz-font-sans)`, color: "var(--flz-text-secondary)" }}>
+              {settings.hero_subhead.trim()}
+            </p>
+          )}
         </div>
         {/* Only counters with a real number earn a tile. A grid of placeholders
             reading "soon" is not a statistic, it is furniture. */}
@@ -1634,7 +1723,8 @@ function MainSlab({
           {activeView === "message" ? <MessagePanel /> : (
             <div className="flz-view" style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column", gap: 14 }}>
               <div className="flz-pager-row" style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                <div style={{ flexShrink: 0, whiteSpace: "nowrap", font: `500 14px/1 var(--flz-font-sans)`, letterSpacing: "-.005em", color: "var(--flz-text-primary)" }}>Recent work</div>
+                {/* Edited in /studio; falls back to "Featured". */}
+                <div style={{ flexShrink: 0, whiteSpace: "nowrap", font: `400 22px/1.1 var(--flz-font-display)`, letterSpacing: "-.006em", color: "var(--flz-text-primary)" }}>{settings.projects_heading?.trim() || "Featured"}</div>
                 {pageCount > 1 && (
                   <span style={{ flexShrink: 0, whiteSpace: "nowrap", font: `400 12px/1 var(--flz-font-mono)`, color: "var(--flz-text-muted)" }}>{safeProjectPage + 1}/{pageCount}</span>
                 )}
@@ -1660,37 +1750,48 @@ function MainSlab({
         </div>
 
         {/* Right column */}
-        <div className="flz-sidebar" style={{ flexShrink: 0, width: 322, display: "flex", flexDirection: "column", gap: 18, minHeight: 0, height: "100%" }}>
+        <div className="flz-sidebar" style={{ flexShrink: 0, width: 360, display: "flex", flexDirection: "column", gap: 18, minHeight: 0, height: "100%" }}>
 
           {/* Featured card */}
-          <div className="flz-tile flz-featured" style={{ flex: "1.25", minHeight: 0, display: "flex", flexDirection: "column", overflow: "hidden", borderRadius: 28, background: "#1c1a17", border: "1px solid rgba(255,255,255,.10)", textDecoration: "none", color: "inherit" }}>
+          <div className="flz-tile flz-featured" style={{ flex: "1.25", minHeight: 320, display: "flex", flexDirection: "column", overflow: "hidden", borderRadius: 28, background: "#1c1a17", border: "1px solid rgba(255,255,255,.10)", textDecoration: "none", color: "inherit" }}>
             <div style={{ flex: 1, minHeight: 120, position: "relative", overflow: "hidden" }}>
               <ExternalEmbed
                 src="https://sketchfab.com/models/cbb1b3572d0545f8a8fdbdb09836ebd6/embed?autostart=1&preload=1&transparent=1&ui_hint=0"
                 title="Pentagon Athaan 2026 — live 3D model"
                 provider="Sketchfab (Epic Games)"
                 storageKey="sketchfab"
+                playButton
+                externalUrl="https://sketchfab.com/models/cbb1b3572d0545f8a8fdbdb09836ebd6"
                 allow="autoplay; fullscreen; xr-spatial-tracking"
                 iframeStyle={{ position: "absolute", inset: 0, zIndex: 6, width: "100%", height: "100%", border: "none" }}
-              />
-              <span style={{ position: "absolute", top: 12, left: 12, zIndex: 1 }}>
-                <span className="flz-badge">Featured · latest</span>
-              </span>
+              >
+                {/* Local render shown until the visitor presses play; nothing is requested from Sketchfab before that.
+                    The car sits at 67%/63% of the transparent render, so that point is pinned to the card centre. */}
+                {/* eslint-disable-next-line @next/next/no-img-element -- static poster behind the consent gate */}
+                <img src="/models/Effect/Athaan.webp" alt="Pentagon Athaan 2026 render" style={{ position: "absolute", width: "205%", maxWidth: "none", height: "auto", left: "50%", top: "50%", transform: "translate(-67%, -63%)" }} />
+              </ExternalEmbed>
+              {/* Title floats over the viewer; pointer-events off so the model stays draggable. */}
+              <div style={{ position: "absolute", top: 12, left: 12, right: 12, zIndex: 7, pointerEvents: "none" }}>
+                <div style={{ width: "fit-content", padding: "5px 10px", borderRadius: 12, background: "var(--flz-glass)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", font: `400 22px/1.14 var(--flz-font-display)`, letterSpacing: "-.006em", color: "var(--flz-text-primary)" }}>Pentagon Athaan 2026</div>              </div>
             </div>
-            <div style={{ padding: "15px 16px 16px" }}>
-              <div style={{ font: `400 22px/1.14 var(--flz-font-display)`, letterSpacing: "-.006em", color: "var(--flz-text-primary)" }}>Pentagon Athaan 2026</div>
-              <div style={{ font: `400 var(--flz-fs-body-sm)/1.45 var(--flz-font-sans)`, color: "var(--flz-text-secondary)", marginTop: 7 }}>Preview the model</div>
-            </div>
-            <Link href="/autosalon" className="flz-featured-link" aria-label="Open Autosalon portfolio" />
           </div>
 
+          <SocialStatsCard platform="instagram" stat={socialStats.find((stat) => stat.platform === "instagram")} />
+          <SocialStatsCard platform="tiktok" stat={socialStats.find((stat) => stat.platform === "tiktok")} />
+          <SocialStatsCard platform="youtube" stat={undefined} />
           {/* Discord card — the invite comes from the studio's site settings */}
           <DiscordCard url={settings.discord_url?.trim() || ""} />
         </div>
       </div>
 
       <footer className="flz-enter flz-footer" style={{ "--flz-delay": "270ms" } as React.CSSProperties}>
-        <span>© 2026 Bence Flosz · FLZ Works</span>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <span>© 2026 Bence Flosz · FLZ Works</span>
+          <div className="flz-footer-social">
+            <a href="https://www.instagram.com/vision.flz/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" onClick={() => trackTelemetryEvent("social_open", "main", "instagram")}><IconInstagram /></a>
+            <a href="https://www.tiktok.com/@vision.flz" target="_blank" rel="noopener noreferrer" aria-label="TikTok" onClick={() => trackTelemetryEvent("social_open", "main", "tiktok")}><IconTikTok /></a>
+          </div>
+        </div>
         <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "4px 14px" }}>
           <LegalLinks />
           <TelemetryConsent site="main" inline />
@@ -1712,6 +1813,27 @@ export default function PortfolioHubPage() {
   const [projectsList, setProjectsList] = useState<typeof PROJECTS>(PROJECTS);
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [isAdmin, setIsAdmin] = useState(false);
+  const [socialStats, setSocialStats] = useState<SocialStat[]>([]);
+
+  // Follower and post counters. The server refreshes from the platform APIs at
+  // most every five minutes; polling keeps an open tab current.
+  useEffect(() => {
+    let cancelled = false;
+    const load = () => {
+      fetch("/api/flz/social-stats")
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (!cancelled && Array.isArray(data?.stats)) setSocialStats(data.stats);
+        })
+        .catch(() => {});
+    };
+    load();
+    const timer = window.setInterval(load, 5 * 60_000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, []);
 
   useEffect(() => {
     // Fetch live projects & admin status
@@ -1861,7 +1983,7 @@ export default function PortfolioHubPage() {
               onClick={() => setContactOpen(false)}
               aria-label="Close contact card"
               className="flz-modal-close"
-              style={{ position: "absolute", top: -14, right: -14, zIndex: 10, width: 32, height: 32, borderRadius: "50%", background: "rgba(255,255,255,.18)", border: "1px solid rgba(255,255,255,.28)", color: "#F4F2EF", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", font: "500 18px/1 system-ui" }}
+              style={{ position: "absolute", top: -14, right: -14, zIndex: 10, width: 32, height: 32, borderRadius: "50%", background: "rgba(255,255,255,.18)", border: "1px solid rgba(255,255,255,.28)", color: "#F4F2EF", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", font: `500 18px/1 var(--flz-font-sans)` }}
             >×</button>
             <ContactCard />
           </div>
@@ -1882,6 +2004,7 @@ export default function PortfolioHubPage() {
           setActiveView={setActiveView}
           theme={theme}
           onThemeToggle={toggleTheme}
+          socialStats={socialStats}
         />
       </main>
     </div>

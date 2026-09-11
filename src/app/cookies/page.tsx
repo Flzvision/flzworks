@@ -87,8 +87,8 @@ export default function CookiesPage() {
 
       <LegalSection id="analytics" title="2. Analytics">
         <p>
-          The optional visitor analytics are cookieless: they only run after you click <em>Allow analytics</em>, and
-          your choice is kept in local storage. Change it at any time with the <em>Privacy · analytics</em> button in
+          The optional visitor analytics are cookieless: they only run after you click <em>Allow</em> in the consent banner, and
+          your choice is kept in local storage. Change it at any time with the <em>Cookies/analytics</em> button in
           the page footer. Details are in the{" "}
           <Link href="/privacy#analytics" className={legalLinkClass}>privacy policy</Link>.
         </p>
@@ -100,8 +100,8 @@ export default function CookiesPage() {
           Google cookies when you use it.
         </p>
         <p>
-          <strong>Sketchfab (Epic Games)</strong>: nothing from Sketchfab is loaded until you click{" "}
-          <em>Load 3D model</em>. After that the viewer may set its own cookies.
+          <strong>Sketchfab (Epic Games)</strong>: nothing from Sketchfab is loaded until you press the play button on the
+          3D model (or <em>Load 3D model</em> on pages that show that prompt). After that the viewer may set its own cookies.
         </p>
         <p>
           You can delete or block cookies in your browser settings. Blocking the strictly necessary cookies prevents

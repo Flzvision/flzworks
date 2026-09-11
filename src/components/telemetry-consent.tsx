@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { TelemetryEventType, TelemetrySite } from "@/lib/telemetry";
 import {
+  readConsent,
   registerTelemetrySender,
   TELEMETRY_CONSENT_KEY,
 } from "@/lib/telemetry-client";
@@ -102,15 +103,7 @@ export function TelemetryConsent({ site, inline = false }: TelemetryConsentProps
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   useEffect(() => {
-    const globalPrivacyControl = Boolean(
-      (navigator as Navigator & { globalPrivacyControl?: boolean }).globalPrivacyControl,
-    );
-    const stored = window.localStorage.getItem(TELEMETRY_CONSENT_KEY);
-    const next: ConsentState = globalPrivacyControl || navigator.doNotTrack === "1"
-      ? "denied"
-      : stored === "granted" || stored === "denied"
-        ? stored
-        : "undecided";
+    const next: ConsentState = readConsent();
     const timer = window.setTimeout(() => setConsent(next), 0);
     return () => window.clearTimeout(timer);
   }, []);
@@ -130,8 +123,7 @@ export function TelemetryConsent({ site, inline = false }: TelemetryConsentProps
 
       {showPanel ? (
         <section className={s.panel} role="dialog" aria-labelledby={`telemetry-consent-title-${site}`}>
-          <div className={s.eyebrow}>Privacy-friendly analytics</div>
-          <h2 className={s.title} id={`telemetry-consent-title-${site}`}>May FLZ Works measure this visit?</h2>
+          <h2 className={s.title} id={`telemetry-consent-title-${site}`}>Allow cookies and diagnostics?</h2>
           <p className={s.copy}>
             With your permission, this site records first-party visit duration and aggregate social
             and vCard interactions. It uses no analytics cookies, advertising profiles, IP storage,
@@ -139,15 +131,15 @@ export function TelemetryConsent({ site, inline = false }: TelemetryConsentProps
           </p>
           <p className={s.meta}>
             Controller: Bence Flosz (FLZ Works), Budapest. Purpose: improve the portfolio.
-            Legal basis: your consent. The data is only stored with the site&apos;s hosting provider, and you can
+            Legal basis: your consent. Analytics data is only stored with the site&apos;s hosting provider, and you can
             withdraw here at any time. <Link href="/privacy#analytics" className={s.link}>Privacy policy</Link>
           </p>
           <div className={s.actions}>
             <button type="button" className={s.accept} onClick={() => choose("granted")}>
-              Allow analytics
+              Allow
             </button>
             <button type="button" className={s.decline} onClick={() => choose("denied")}>
-              {consent === "granted" ? "Turn off analytics" : "Decline analytics"}
+              {consent === "granted" ? "Turn off" : "Decline"}
             </button>
           </div>
           {consent !== "undecided" && (
@@ -158,7 +150,7 @@ export function TelemetryConsent({ site, inline = false }: TelemetryConsentProps
         </section>
       ) : (
         <button type="button" className={`${s.privacyButton} ${inline ? s.privacyButtonInline : ""}`} onClick={() => setSettingsOpen(true)}>
-          Privacy · analytics {consent === "granted" ? "on" : "off"}
+          Cookies/analytics {consent === "granted" ? "enabled" : "disabled"}
         </button>
       )}
     </>

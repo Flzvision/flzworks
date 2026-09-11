@@ -10,6 +10,7 @@ export interface SocialMetric {
   platform: SocialPlatform;
   followers: number | null;
   likes: number | null;
+  posts: number | null;
   status: SocialMetricStatus;
   updatedAt: string | null;
   error: string | null;
@@ -28,6 +29,7 @@ function disconnected(platform: SocialPlatform): SocialMetric {
     platform,
     followers: null,
     likes: null,
+    posts: null,
     status: "disconnected",
     updatedAt: null,
     error: null,
@@ -39,6 +41,7 @@ function failed(platform: SocialPlatform, error: unknown): SocialMetric {
     platform,
     followers: null,
     likes: null,
+    posts: null,
     status: "error",
     updatedAt: null,
     error: error instanceof Error ? error.message : "Provider request failed",
@@ -82,7 +85,7 @@ async function instagramMetrics(): Promise<SocialMetric> {
   const profileUrl = new URL(
     `https://graph.instagram.com/${version}/${encodeURIComponent(userId)}`,
   );
-  profileUrl.searchParams.set("fields", "followers_count");
+  profileUrl.searchParams.set("fields", "followers_count,media_count");
   profileUrl.searchParams.set("access_token", token);
 
   const mediaUrl = new URL(
@@ -94,10 +97,11 @@ async function instagramMetrics(): Promise<SocialMetric> {
 
   try {
     const [profile, media] = await Promise.all([
-      fetchJson(profileUrl) as Promise<{ followers_count?: number }>,
+      fetchJson(profileUrl) as Promise<{ followers_count?: number; media_count?: number }>,
       fetchJson(mediaUrl) as Promise<{ data?: Array<{ like_count?: number }> }>,
     ]);
     const followers = numeric(profile.followers_count);
+    const posts = numeric(profile.media_count);
     const likes = Array.isArray(media.data)
       ? media.data.reduce((sum, item) => sum + (numeric(item.like_count) ?? 0), 0)
       : null;
@@ -108,6 +112,7 @@ async function instagramMetrics(): Promise<SocialMetric> {
       platform,
       followers,
       likes,
+      posts,
       status: "live",
       updatedAt: new Date().toISOString(),
       error: null,
@@ -130,12 +135,13 @@ async function tiktokMetrics(): Promise<SocialMetric> {
     const token = await getTikTokAccessToken();
     if (!token) throw new Error("TikTok authorization is incomplete");
     const url = new URL("https://open.tiktokapis.com/v2/user/info/");
-    url.searchParams.set("fields", "follower_count,likes_count");
+    url.searchParams.set("fields", "follower_count,likes_count,video_count");
     const payload = await fetchJson(url, { Authorization: `Bearer ${token}` }) as {
-      data?: { user?: { follower_count?: number; likes_count?: number } };
+      data?: { user?: { follower_count?: number; likes_count?: number; video_count?: number } };
     };
     const followers = numeric(payload.data?.user?.follower_count);
     const likes = numeric(payload.data?.user?.likes_count);
+    const posts = numeric(payload.data?.user?.video_count);
     if (followers === null && likes === null) {
       throw new Error("TikTok did not return stats; the user.info.stats scope is required");
     }
@@ -143,6 +149,7 @@ async function tiktokMetrics(): Promise<SocialMetric> {
       platform,
       followers,
       likes,
+      posts,
       status: "live",
       updatedAt: new Date().toISOString(),
       error: null,
@@ -182,6 +189,7 @@ async function linkedinMetrics(): Promise<SocialMetric> {
     ]);
     const followers = numeric(followersPayload.firstDegreeSize);
     const likes = numeric(likesPayload.elements?.[0]?.totalShareStatistics?.likeCount);
+    const posts = null;
     if (followers === null && likes === null) {
       throw new Error("LinkedIn did not return organization metrics");
     }
@@ -189,6 +197,7 @@ async function linkedinMetrics(): Promise<SocialMetric> {
       platform,
       followers,
       likes,
+      posts,
       status: "live",
       updatedAt: new Date().toISOString(),
       error: null,
@@ -215,6 +224,7 @@ export async function readCachedSocialMetrics(): Promise<SocialMetric[]> {
         platform: item.platform as SocialPlatform,
         followers,
         likes,
+        posts: numeric(item.posts),
         status: "stale" as const,
         updatedAt: item.updatedAt,
         error: null,

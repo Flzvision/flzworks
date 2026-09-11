@@ -43,11 +43,11 @@ export default function PrivacyPage() {
 
         <h3 id="analytics" className="scroll-mt-8 font-semibold text-[#1d1d1f]">Optional analytics (only with your consent)</h3>
         <p>
-          If you click <em>Allow analytics</em>, the site records a random session ID, which site section and page you
+          If you click <em>Allow</em> in the consent banner, the site records a random session ID, which site section and page you
           opened, how long the page was visible, and whether you opened a social link or the vCard. No IP address,
           user agent, referrer, cookie or cross-site identifier is stored. If your browser sends a Global Privacy
           Control or Do Not Track signal, analytics stay off. Legal basis: consent (GDPR Art. 6(1)(a)). You can
-          withdraw at any time with the <em>Privacy · analytics</em> button in the page footer. Visit records are
+          withdraw at any time with the <em>Cookies/analytics</em> button in the page footer. Visit records are
           deleted after 370 days.
         </p>
 
@@ -80,8 +80,8 @@ export default function PrivacyPage() {
 
         <h3 id="embeds" className="scroll-mt-8 font-semibold text-[#1d1d1f]">Embedded 3D viewer</h3>
         <p>
-          3D models are shown with a viewer from Sketchfab (Epic Games). The viewer is only loaded after you click{" "}
-          <em>Load 3D model</em>; from then on Sketchfab receives your IP address and may set its own cookies under{" "}
+          3D models are shown with a viewer from Sketchfab (Epic Games). Nothing is requested from Sketchfab until you press the play button on the model (a
+          local image is shown until then), and the choice is not remembered; once loaded, Sketchfab receives your IP address and may set its own cookies under{" "}
           <a href="https://www.epicgames.com/site/privacypolicy" className={legalLinkClass} rel="noopener noreferrer" target="_blank">
             Epic Games&apos; privacy policy
           </a>
@@ -106,7 +106,7 @@ export default function PrivacyPage() {
             <a href="https://policies.google.com/privacy" className={legalLinkClass} rel="noopener noreferrer" target="_blank">Privacy policy</a>
           </li>
           <li>
-            <strong>Sketchfab / Epic Games</strong>: only if you choose to load a 3D model.
+            <strong>Sketchfab / Epic Games</strong>: only when you press play to load a 3D model.
           </li>
         </LegalList>
         <p>

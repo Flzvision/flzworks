@@ -9,8 +9,8 @@ export const PUBLIC_CONTACT_PROFILE = {
 
 export const PUBLIC_CONTACT_ROWS = [
   ["NAME", PUBLIC_CONTACT_PROFILE.name],
-  ["INTEREST", PUBLIC_CONTACT_PROFILE.interest],
-  ["WEB", PUBLIC_CONTACT_PROFILE.webLabel],
+  ["SPECIALITY", PUBLIC_CONTACT_PROFILE.interest],
+  ["SITE", PUBLIC_CONTACT_PROFILE.webLabel],
 ] as const;
 
 // Served from /public so opening the ID card never calls a third-party QR API.

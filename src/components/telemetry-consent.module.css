@@ -14,17 +14,12 @@
   box-shadow: 0 24px 70px rgba(29,29,31,.22), inset 0 0 0 1px rgba(29,29,31,.06);
   backdrop-filter: blur(24px) saturate(160%);
   -webkit-backdrop-filter: blur(24px) saturate(160%);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  /* Same faces as the page: the flz tokens on the landing page, the app fonts elsewhere. */
+  font-family: var(--flz-font-sans, var(--font-sans, "Inter")), "Inter", Arial, sans-serif;
   animation: consent-in .32s cubic-bezier(.22,1,.36,1) both;
 }
 /* Secondary text alphas stay >= 4.5:1 against the near-white panel (WCAG AA). */
-.eyebrow {
-  color: rgba(29,29,31,.68);
-  font: 600 10px/1 "SFMono-Regular", "SF Mono", ui-monospace, Menlo, monospace;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-}
-.title { margin: 9px 0 7px; font-size: 19px; line-height: 1.15; letter-spacing: -.025em; }
+.title { margin: 0 64px 8px 0; font: 400 26px/1.1 var(--flz-font-display, var(--font-display, var(--font-sans, "Inter"))), Georgia, serif; letter-spacing: -.01em; }
 .copy { margin: 0; color: rgba(29,29,31,.74); font-size: 13px; line-height: 1.5; }
 .meta { margin: 9px 0 0; color: rgba(29,29,31,.7); font-size: 11px; line-height: 1.45; }
 .link { color: #0066cc; text-decoration: underline; text-underline-offset: 2px; }
@@ -39,7 +34,10 @@
   min-height: 44px;
   border-radius: 999px;
   border: 1px solid rgba(29,29,31,.14);
-  font: 600 13px/1 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
   cursor: pointer;
   transition: transform .18s cubic-bezier(.22,1,.36,1), background .18s, color .18s;
 }
@@ -61,7 +59,10 @@
   border: 0;
   background: transparent;
   color: rgba(29,29,31,.7);
-  font: 500 11px/1 -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
   cursor: pointer;
 }
 .privacyButton {
@@ -75,7 +76,7 @@
   background: transparent;
   color: rgba(29,29,31,.72);
   box-shadow: none;
-  font: 500 10px/1 "SFMono-Regular", "SF Mono", ui-monospace, Menlo, monospace;
+  font: 500 10px/1 var(--flz-font-mono, var(--font-mono, "JetBrains Mono")), ui-monospace, monospace;
   letter-spacing: .025em;
   cursor: pointer;
   text-decoration: none;
