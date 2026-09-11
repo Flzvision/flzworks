@@ -1,9 +1,9 @@
 /**
- * Coarse "how long ago" label for project cards.
+ * Coarse "how long ago" label for the studio's project list.
  *
- * The studio stores a real date so old work can be backdated accurately, but the
- * public grid only ever shows the rough distance: days under a month, months
- * under a year, years beyond that.
+ * The studio stores a real date so old work can be backdated accurately and shows
+ * the rough distance: days under a month, months under a year, years beyond that.
+ * The public grid does not show it.
  */
 export function relativeAge(value: Date | string | null | undefined, now: Date = new Date()): string {
   if (!value) {

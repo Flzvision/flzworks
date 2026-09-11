@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
-import { relativeAge } from "@/lib/flz-date";
 import { ExternalEmbed } from "@/components/external-embed";
 import { LegalLinks } from "@/components/legal-links";
 import { TelemetryConsent } from "@/components/telemetry-consent";
@@ -1176,7 +1175,7 @@ const DS_TOKENS = `
 `;
 
 // ── Static data ──────────────────────────────────────────────────────────────
-const PROJECTS: { id: number; tools: string; title: string; cat: string; age: string; grad: string; link: string; img: string; body: string }[] = [];
+const PROJECTS: { id: number; tools: string; title: string; cat: string; grad: string; link: string; img: string; body: string }[] = [];
 
 const CATEGORY_ORDER = ["Social", "Assets", "Characters", "Gameplay", "Automotive"];
 
@@ -1404,9 +1403,7 @@ function ProjectTile({ project }: { project: typeof PROJECTS[number] }) {
         {project.body && (
           <p className="flz-project-body">{project.body}</p>
         )}
-        <div className="flz-project-meta">
-          {[project.cat, project.age].filter(Boolean).join(" · ")}
-        </div>
+        <div className="flz-project-meta">{project.cat}</div>
       </div>
     </a>
   );
@@ -1858,7 +1855,6 @@ export default function PortfolioHubPage() {
             tools: p.tools,
             title: p.title,
             cat: p.category,
-            age: relativeAge(p.publishedAt),
             grad: p.gradient || "radial-gradient(120% 130% at 24% 6%,rgba(216,195,166,.62),rgba(120,96,72,.12) 55%,transparent 76%)",
             link: p.linkUrl || "",
             img: p.imageUrl || "",

@@ -578,7 +578,7 @@ function ProjectDialog({
             label="Date"
             hint={
               form.publishedAt
-                ? `Shows as “${relativeAge(form.publishedAt)}” on the card.`
+                ? `${relativeAge(form.publishedAt)}. Only shown here in the studio, not on the public card.`
                 : "When the work was made. Older work is fine."
             }
           >
