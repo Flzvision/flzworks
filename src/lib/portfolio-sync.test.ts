@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { parseFolderName, syncPortfolioArticles } from "./portfolio-sync";
 import { prisma } from "./prisma";
+import type { PortfolioArticle } from "@prisma/client";
 import { readdir } from "fs/promises";
 
 vi.mock("fs/promises", () => ({
@@ -10,8 +11,8 @@ vi.mock("fs/promises", () => ({
 vi.mock("./prisma", () => ({
   prisma: {
     portfolioArticle: {
-      findUnique: vi.fn(),
-      create: vi.fn(),
+      findMany: vi.fn(),
+      createMany: vi.fn(),
     },
   },
 }));
@@ -38,29 +39,40 @@ describe("portfolio-sync", () => {
       return ["1.png", "2.jpg"];
     });
 
-    // Mock prisma findUnique to return null (force creation)
-    vi.mocked(prisma.portfolioArticle.findUnique).mockResolvedValue(null);
+    // The sync reads existing rows, inserts the folders it did not find, then
+    // reads those back. Start with an empty table so every folder is created,
+    // and serve the read-back from what createMany was handed.
+    const createdRows: PortfolioArticle[] = [];
+    // The read-back is handed the same array createMany fills in, so the first
+    // call sees an empty table and the second sees the freshly inserted rows.
+    vi.mocked(prisma.portfolioArticle.findMany)
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce(createdRows);
 
-    // Capture created categories
-    const createdCategories: string[] = [];
-    vi.mocked(prisma.portfolioArticle.create).mockImplementation(((args: any) => {
-      createdCategories.push(args.data.category);
-      return Promise.resolve({
-        id: "mocked-id",
-        folderName: args.data.folderName,
-        title: args.data.title,
-        date: args.data.date,
-        visible: args.data.visible,
-        category: args.data.category,
-        description: args.data.description,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      });
-    }) as any);
+    vi.mocked(prisma.portfolioArticle.createMany).mockImplementation((args) => {
+      const rows = Array.isArray(args?.data) ? args.data : [args!.data];
+      for (const row of rows) {
+        createdRows.push({
+          id: `mocked-${row.folderName}`,
+          ...row,
+          description: row.description ?? null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        } as PortfolioArticle);
+      }
+      return Promise.resolve({ count: rows.length }) as ReturnType<
+        typeof prisma.portfolioArticle.createMany
+      >;
+    });
 
     const result = await syncPortfolioArticles();
 
-    expect(createdCategories).toEqual([
+    // One read for existing rows, one insert, one read-back — never one query
+    // per folder, however many folders there are.
+    expect(vi.mocked(prisma.portfolioArticle.findMany)).toHaveBeenCalledTimes(2);
+    expect(vi.mocked(prisma.portfolioArticle.createMany)).toHaveBeenCalledTimes(1);
+
+    expect(createdRows.map((row) => row.category)).toEqual([
       "BRICKWORKS",
       "GAMES",
       "MEDIA",
