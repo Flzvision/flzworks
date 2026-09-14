@@ -75,7 +75,10 @@ export function PortfolioBlueprint({ articles, transmissions }: PortfolioBluepri
   // Scroll-spy: the last section whose top has passed under the bar is active.
   useEffect(() => {
     const ids = NAV_ITEMS.map((item) => item.id);
+    let frame = 0;
+
     const update = () => {
+      frame = 0;
       let current: SectionId = ids[0];
       for (const id of ids) {
         const el = document.getElementById(id);
@@ -85,12 +88,22 @@ export function PortfolioBlueprint({ articles, transmissions }: PortfolioBluepri
       }
       setActiveSection(current);
     };
+
+    // Scroll fires far more often than the screen repaints, and each run forces
+    // a layout for every section. Collapse a burst of events into one pass per
+    // frame so the measuring cost tracks frames rather than scroll events.
+    const schedule = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(update);
+    };
+
     update();
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
     return () => {
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
     };
   }, []);
 

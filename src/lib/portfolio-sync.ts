@@ -48,9 +48,72 @@ export function parseFolderName(folderName: string): { title: string; date: stri
   return { title: formattedTitle, date };
 }
 
+// Smart default categorization, applied once when a folder is first seen.
+function defaultCategoryFor(folderName: string): string {
+  const nameLower = folderName.toLowerCase();
+  if (nameLower.includes("lego")) {
+    return "BRICKWORKS";
+  }
+  if (nameLower.includes("godot") || nameLower.includes("game")) {
+    return "GAMES";
+  }
+  if (nameLower.includes("poster") || nameLower.includes("video") || nameLower.includes("render") || nameLower.includes("media")) {
+    return "MEDIA";
+  }
+  if (nameLower.includes("car") || nameLower.includes("auto") || nameLower.includes("hypercar")) {
+    return "CAR_DESIGN";
+  }
+  return "OTHER";
+}
+
+/**
+ * Load every article row backing `Media/Portfolio`, creating rows for folders
+ * that do not have one yet.
+ *
+ * This runs on every request of the public pages, so it stays at a fixed three
+ * queries regardless of folder count rather than one lookup per folder.
+ */
+async function loadArticleRows(folders: string[]) {
+  const existing = await prisma.portfolioArticle.findMany({
+    where: { folderName: { in: folders } },
+  });
+
+  const byFolder = new Map(existing.map((article) => [article.folderName, article]));
+  const missing = folders.filter((folder) => !byFolder.has(folder));
+
+  if (missing.length) {
+    await prisma.portfolioArticle.createMany({
+      data: missing.map((folder) => {
+        const { title, date } = parseFolderName(folder);
+        return {
+          folderName: folder,
+          title,
+          date: date || "N/A",
+          visible: true,
+          category: defaultCategoryFor(folder),
+          description: `Portfolio project: ${title}. Automatically loaded from Media repository.`,
+        };
+      }),
+      // A concurrent request may have inserted the same folder between the read
+      // above and this write; let that row win instead of failing the render.
+      skipDuplicates: true,
+    });
+
+    // createMany cannot return the inserted rows, so read back just the new ones.
+    const created = await prisma.portfolioArticle.findMany({
+      where: { folderName: { in: missing } },
+    });
+    for (const article of created) {
+      byFolder.set(article.folderName, article);
+    }
+  }
+
+  return byFolder;
+}
+
 export async function syncPortfolioArticles(): Promise<PortfolioArticleWithImages[]> {
   const portfolioRoot = path.join(process.cwd(), "Media", "Portfolio");
-  
+
   let folders: string[] = [];
   try {
     const entries = await readdir(portfolioRoot, { withFileTypes: true });
@@ -62,40 +125,20 @@ export async function syncPortfolioArticles(): Promise<PortfolioArticleWithImage
     return [];
   }
 
+  if (!folders.length) {
+    return [];
+  }
+
+  const byFolder = await loadArticleRows(folders);
   const articles: PortfolioArticleWithImages[] = [];
 
   for (const folder of folders) {
-    const { title: defaultTitle, date: parsedDate } = parseFolderName(folder);
+    const dbArticle = byFolder.get(folder);
 
-    // Sync with database: find or create
-    let dbArticle = await prisma.portfolioArticle.findUnique({
-      where: { folderName: folder },
-    });
-
+    // Only possible if the row lost a race and was deleted again; skip it
+    // rather than rendering a half-built article.
     if (!dbArticle) {
-      // Smart default categorization
-      let defaultCategory = "OTHER";
-      const nameLower = folder.toLowerCase();
-      if (nameLower.includes("lego")) {
-        defaultCategory = "BRICKWORKS";
-      } else if (nameLower.includes("godot") || nameLower.includes("game")) {
-        defaultCategory = "GAMES";
-      } else if (nameLower.includes("poster") || nameLower.includes("video") || nameLower.includes("render") || nameLower.includes("media")) {
-        defaultCategory = "MEDIA";
-      } else if (nameLower.includes("car") || nameLower.includes("auto") || nameLower.includes("hypercar")) {
-        defaultCategory = "CAR_DESIGN";
-      }
-
-      dbArticle = await prisma.portfolioArticle.create({
-        data: {
-          folderName: folder,
-          title: defaultTitle,
-          date: parsedDate || "N/A",
-          visible: true,
-          category: defaultCategory,
-          description: `Portfolio project: ${defaultTitle}. Automatically loaded from Media repository.`,
-        },
-      });
+      continue;
     }
 
     // Read images in the folder
