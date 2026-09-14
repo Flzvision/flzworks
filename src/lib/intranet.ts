@@ -3,7 +3,7 @@ import "server-only";
 import { cookies, headers } from "next/headers";
 import { NextResponse, type NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { AUTOPIAC_BASE_PATH, AUTOPIAC_INTRANET_MODULE, type IntranetModule } from "@/lib/routes";
+import { type IntranetModule } from "@/lib/routes";
 import {
   INTRANET_ACCESS_COOKIE,
   INTRANET_ACCESS_MAX_AGE_SECONDS,
@@ -26,7 +26,7 @@ export function getClientIpFromHeaders(headerSource: Headers) {
   );
 }
 
-export async function hasValidIntranetCookie(cookieValue?: string, module: IntranetModule = AUTOPIAC_INTRANET_MODULE) {
+export async function hasValidIntranetCookie(cookieValue: string | undefined, module: IntranetModule) {
   const payload = verifyIntranetAccessToken(cookieValue);
   if (!payload || payload.module !== module) {
     return false;
@@ -46,7 +46,7 @@ export async function hasValidIntranetCookie(cookieValue?: string, module: Intra
 }
 
 export async function getIntranetGateState(
-  module: IntranetModule = AUTOPIAC_INTRANET_MODULE,
+  module: IntranetModule,
 ): Promise<IntranetGateState> {
   if (process.env.NODE_ENV === "development") {
     return { status: "allowed" };
@@ -93,7 +93,7 @@ export function setIntranetAccessCookie(
 
 export async function requireIntranetApiAccess(
   request: NextRequest,
-  module: IntranetModule = AUTOPIAC_INTRANET_MODULE,
+  module: IntranetModule,
 ) {
   const ipAddress = getClientIpFromHeaders(request.headers);
 

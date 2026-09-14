@@ -3,9 +3,8 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { dictionaries } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n-server";
-import type { SearchParamsInput } from "@/lib/listings";
+import type { SearchParamsInput } from "@/lib/search-params";
 import { AuthForm } from "@/components/auth-form";
-import { Header } from "@/components/header";
 import { checkIsAdminEmail } from "@/lib/flz-security";
 
 export const dynamic = "force-dynamic";
@@ -23,7 +22,6 @@ export default async function RegisterPage({ searchParams }: { searchParams: Pro
 
   return (
     <>
-      <Header locale={locale} />
       <div className="mx-auto grid min-h-[calc(100vh-160px)] max-w-md content-center px-4 py-10 sm:px-6">
         <div className="mb-5">
           <h1 className="text-2xl font-black text-slate-950">{t.auth.registerTitle}</h1>

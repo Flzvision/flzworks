@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getClientIpFromHeaders } from "@/lib/intranet";
 import { createOpaqueToken, hashOpaqueToken } from "@/lib/intranet-token";
 import { sendAccessRequestEmail } from "@/lib/mailer";
-import { AUTOPIAC_INTRANET_MODULE, ALLOWED_INTRANET_MODULES, type IntranetModule } from "@/lib/routes";
+import { ALLOWED_INTRANET_MODULES, type IntranetModule } from "@/lib/routes";
 import { intranetAccessRequestSchema } from "@/lib/validation";
 
 const REQUEST_TTL_MS = 1000 * 60 * 60 * 24;
@@ -29,8 +29,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Enter a valid name and email." }, { status: 400 });
   }
 
-  const requestModule = parsed.data.module || AUTOPIAC_INTRANET_MODULE;
-  if (!ALLOWED_INTRANET_MODULES.includes(requestModule as IntranetModule)) {
+  // There is no default module any more, so an unspecified one is invalid
+  // rather than silently falling through to the marketplace.
+  const requestModule = parsed.data.module;
+  if (!requestModule || !ALLOWED_INTRANET_MODULES.includes(requestModule as IntranetModule)) {
     return NextResponse.json({ error: "Invalid module specified." }, { status: 400 });
   }
 

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { getLocale } from "@/lib/i18n-server";
-import type { SearchParamsInput } from "@/lib/listings";
+import type { SearchParamsInput } from "@/lib/search-params";
 import { GoogleSignInButton } from "@/components/auth-form";
 import { checkIsAdminEmail } from "@/lib/flz-security";
 
