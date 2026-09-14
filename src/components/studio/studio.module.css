@@ -2485,3 +2485,418 @@
     transform: none !important;
   }
 }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Shell: 20% editor rail + the live site, with the dashboard floating over
+   the site half. The rail is docked rather than overlaid so the frame beside
+   it is never covered while you are editing.
+   ───────────────────────────────────────────────────────────────────────── */
+
+.workspace {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: clamp(280px, 20%, 420px) 1fr;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.rail {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  gap: 14px;
+  padding: 16px 14px;
+  /* The rail itself does not scroll: the inspector does, so the save button
+     and the footer stay reachable however long a form gets. */
+  overflow: hidden;
+  background: var(--st-panel);
+  border-right: 1px solid var(--st-line);
+}
+
+.railHead {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.railBrand {
+  font-family: var(--st-display);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--st-fg);
+  text-decoration: none;
+}
+
+.railBrand span { color: var(--st-accent); }
+
+.railDashBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 11px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--st-fg);
+  cursor: pointer;
+  background: var(--st-accent-soft);
+  border: 1px solid var(--st-accent-line);
+  border-radius: var(--st-r-pill);
+  transition: background 160ms var(--st-ease);
+}
+
+.railDashBtn:hover { background: var(--st-accent-line); }
+
+.railBlock {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  background: var(--st-raised);
+  border: 1px solid var(--st-line);
+  border-radius: var(--st-r-md);
+}
+
+.railLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--st-fg-3);
+}
+
+.railCount {
+  padding: 1px 6px;
+  font-size: 10px;
+  color: var(--st-fg-2);
+  background: var(--st-sunken);
+  border-radius: var(--st-r-pill);
+}
+
+.railSelect {
+  width: 100%;
+  padding: 9px 10px;
+  font-family: var(--st-sans);
+  font-size: 13px;
+  color: var(--st-fg);
+  background: var(--st-sunken);
+  border: 1px solid var(--st-line-2);
+  border-radius: var(--st-r-sm);
+}
+
+.railSections {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+}
+
+.railNote {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--st-fg-3);
+}
+
+.railList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 34vh;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.railItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  font-family: var(--st-sans);
+  font-size: 12.5px;
+  color: var(--st-fg-2);
+  text-align: left;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--st-r-sm);
+  transition: background 140ms var(--st-ease), color 140ms var(--st-ease);
+}
+
+.railItem:hover { color: var(--st-fg); background: var(--st-raised); }
+
+.railItemActive {
+  color: var(--st-fg);
+  background: var(--st-accent-soft);
+  border-color: var(--st-accent-line);
+}
+
+.railKind {
+  flex: none;
+  padding: 2px 6px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--st-fg-3);
+  background: var(--st-sunken);
+  border-radius: var(--st-r-pill);
+}
+
+.railItemLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.railInspector {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding-top: 4px;
+  overflow-y: auto;
+  border-top: 1px solid var(--st-line);
+}
+
+.inspector {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 12px;
+  /* Room for the sticky save button to sit over without hiding the last field. */
+  padding-bottom: 6px;
+}
+
+.inspectorTitle {
+  margin: 0;
+  font-family: var(--st-display);
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--st-fg);
+}
+
+.inspectorToggles { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.chipToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--st-fg-2);
+  cursor: pointer;
+  background: var(--st-sunken);
+  border: 1px solid var(--st-line);
+  border-radius: var(--st-r-pill);
+}
+
+.chipToggleOn {
+  color: var(--st-fg);
+  background: var(--st-live-soft);
+  border-color: var(--st-live-line);
+}
+
+.railSave {
+  /* Sticks to the foot of the scrolling inspector so a long form never puts
+     the save out of reach. */
+  position: sticky;
+  bottom: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 2px;
+  padding: 9px 12px;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #241c07;
+  cursor: pointer;
+  background: var(--st-accent);
+  border: 0;
+  border-radius: var(--st-r-pill);
+  box-shadow: 0 -8px 16px -8px var(--st-panel);
+}
+
+.railSave:disabled { color: var(--st-fg-3); cursor: default; background: var(--st-raised); }
+
+.railFoot {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--st-line);
+}
+
+.railUser {
+  overflow: hidden;
+  font-size: 11px;
+  color: var(--st-fg-3);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.railOpen {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--st-fg-2);
+  text-decoration: none;
+}
+
+/* The site half. */
+
+.stage { position: relative; min-width: 0; background: var(--st-bg); }
+
+.stageFrame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Dashboard: floats over the site half only, leaving the rail reachable. */
+
+.dashWrap { position: absolute; inset: 0; z-index: 20; }
+
+.dashScrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(3px);
+}
+
+.dash {
+  position: absolute;
+  inset: 16px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--st-panel);
+  border: 1px solid var(--st-line-2);
+  border-radius: var(--st-r-lg);
+  box-shadow: var(--st-shadow);
+}
+
+.dashHead {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--st-line);
+}
+
+.dashTabs { display: flex; flex-wrap: wrap; gap: 4px; }
+
+.dashTab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  font-family: var(--st-sans);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--st-fg-2);
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--st-r-pill);
+}
+
+.dashTab:hover { color: var(--st-fg); background: var(--st-raised); }
+
+.dashTabActive {
+  color: var(--st-fg);
+  background: var(--st-accent-soft);
+  border-color: var(--st-accent-line);
+}
+
+.dashCount {
+  padding: 1px 6px;
+  font-size: 10px;
+  background: var(--st-sunken);
+  border-radius: var(--st-r-pill);
+}
+
+.dashClose {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  color: var(--st-fg-2);
+  cursor: pointer;
+  background: var(--st-raised);
+  border: 1px solid var(--st-line);
+  border-radius: var(--st-r-pill);
+}
+
+.dashClose:hover { color: var(--st-fg); }
+
+.dashBody { flex: 1 1 auto; min-height: 0; padding: 16px; overflow-y: auto; }
+
+.dashPane { display: block; }
+
+.dashPaneHidden { display: none; }
+
+.dashGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+}
+
+.dashFoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--st-line);
+}
+
+.dashUser { font-size: 11.5px; color: var(--st-fg-3); }
+
+.dashSignOut {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 11px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--st-fg-2);
+  cursor: pointer;
+  background: var(--st-raised);
+  border: 1px solid var(--st-line);
+  border-radius: var(--st-r-pill);
+}
+
+/* Narrow screens cannot show a rail beside a page, so the rail goes on top
+   and the frame takes what is left. */
+@media (max-width: 860px) {
+  .workspace { grid-template-columns: 1fr; grid-template-rows: minmax(0, 46%) 1fr; }
+  .rail { border-right: 0; border-bottom: 1px solid var(--st-line); }
+  .railList { max-height: 22vh; }
+  .dash { inset: 8px; }
+}

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { getLocale } from "@/lib/i18n-server";
+import { EditBridge } from "@/components/studio/edit-bridge";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -111,6 +112,11 @@ export default async function RootLayout({
           </defs>
         </svg>
         {children}
+        {/*
+          Inert for visitors: it renders nothing and registers no listeners
+          unless the studio shell, one frame up on the same origin, engages it.
+        */}
+        <EditBridge />
       </body>
     </html>
   );

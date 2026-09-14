@@ -1687,12 +1687,20 @@ function MainSlab({
       <div className="flz-enter flz-hero" style={{ "--flz-delay": "70ms", display: "flex", alignItems: "flex-end", gap: 32, flexWrap: "wrap" } as React.CSSProperties}>
         <div style={{ flex: "1 1 420px", minWidth: 0 }}>
           {/* Headline, sub-line, counters and the Discord link are edited in /studio. */}
-          <h1 style={{ margin: 0, font: `400 clamp(2.5rem,1.6rem + 3.3vw,4rem)/1.03 var(--flz-font-display)`, letterSpacing: "-.014em", color: "var(--flz-text-primary)", whiteSpace: "pre-line", textWrap: "balance" }}>
+          <h1
+            data-flz-editable="setting:hero_headline"
+            data-flz-label="Hero headline"
+            style={{ margin: 0, font: `400 clamp(2.5rem,1.6rem + 3.3vw,4rem)/1.03 var(--flz-font-display)`, letterSpacing: "-.014em", color: "var(--flz-text-primary)", whiteSpace: "pre-line", textWrap: "balance" }}
+          >
             {settings.hero_headline?.trim() || "Munca is now\nin development."}
           </h1>
           {/* No fallback copy: an empty sub-line in /studio hides the paragraph. */}
           {settings.hero_subhead?.trim() && (
-            <p style={{ margin: "14px 0 0", maxWidth: "48ch", font: `400 15px/1.55 var(--flz-font-sans)`, color: "var(--flz-text-secondary)" }}>
+            <p
+              data-flz-editable="setting:hero_subhead"
+              data-flz-label="Hero sub-line"
+              style={{ margin: "14px 0 0", maxWidth: "48ch", font: `400 15px/1.55 var(--flz-font-sans)`, color: "var(--flz-text-secondary)" }}
+            >
               {settings.hero_subhead.trim()}
             </p>
           )}
@@ -1726,7 +1734,11 @@ function MainSlab({
             <div className="flz-view" style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column", gap: 14 }}>
               <div className="flz-pager-row" style={{ display: "flex", alignItems: "center", gap: 14 }}>
                 {/* Edited in /studio; falls back to "Featured". */}
-                <div style={{ flexShrink: 0, whiteSpace: "nowrap", font: `400 22px/1.1 var(--flz-font-display)`, letterSpacing: "-.006em", color: "var(--flz-text-primary)" }}>{settings.projects_heading?.trim() || "Featured"}</div>
+                <div
+                  data-flz-editable="setting:projects_heading"
+                  data-flz-label="Projects heading"
+                  style={{ flexShrink: 0, whiteSpace: "nowrap", font: `400 22px/1.1 var(--flz-font-display)`, letterSpacing: "-.006em", color: "var(--flz-text-primary)" }}
+                >{settings.projects_heading?.trim() || "Featured"}</div>
                 {pageCount > 1 && (
                   <span style={{ flexShrink: 0, whiteSpace: "nowrap", font: `400 12px/1 var(--flz-font-mono)`, color: "var(--flz-text-muted)" }}>{safeProjectPage + 1}/{pageCount}</span>
                 )}
@@ -1740,6 +1752,11 @@ function MainSlab({
                 {tiles.map((p, i) => (
                   <div
                     key={`${activeFilter}-${p.title ? p.id : `empty${i}`}`}
+                    // The grid pads with blank tiles to keep its shape; only a
+                    // real post is something the studio can edit.
+                    {...(p.title
+                      ? { "data-flz-editable": `project:${p.id}`, "data-flz-label": p.title }
+                      : {})}
                     className={`flz-tile-in${i === 0 && leadSpans ? " flz-tile-lead" : ""}`}
                     style={{ "--flz-delay": `${i * 45}ms`, display: "flex", minWidth: 0, minHeight: 0, gridColumn: i === 0 && leadSpans ? "span 2" : undefined } as React.CSSProperties}
                   >
