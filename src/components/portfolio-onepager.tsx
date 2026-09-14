@@ -353,6 +353,8 @@ export function PortfolioOnepager({ instagramMedia, articles, forceNamecardOpen 
               return (
                 <button
                   key={article.id}
+                  data-flz-editable={`article:${article.id}`}
+                  data-flz-label={article.title}
                   className="bp-sheet"
                   onClick={() => setSelectedArticle(article)}
                 >

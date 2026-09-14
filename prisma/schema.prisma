@@ -13,116 +13,13 @@ model User {
   passwordHash  String
   name          String
   role          String        @default("USER")
-  listings      Listing[]
-  favorites     Favorite[]
-  savedSearches SavedSearch[]
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 }
 
-model Listing {
-  id                          String         @id @default(cuid())
-  sellerId                    String
-  seller                      User           @relation(fields: [sellerId], references: [id], onDelete: Cascade)
-  make                        String
-  model                       String
-  trim                        String?
-  yearMonth                   String?
-  year                        Int
-  price                       Int
-  priceEur                    Int?
-  mileage                     Int
-  fuel                        String
-  transmission                String
-  bodyType                    String
-  condition                   String
-  location                    String
-  description                 String
-  financingDetails            String?
-  financeTermMonths           Int?
-  seats                       Int?
-  doors                       Int?
-  color                       String?
-  upholsteryPrimary           String?
-  upholsterySecondary         String?
-  curbWeightKg                Int?
-  grossWeightKg               Int?
-  trunkVolumeLiters           Int?
-  climate                     String?
-  roof                        String?
-  engineDisplacementCcm       Int?
-  powerKw                     Int?
-  powerHp                     Int?
-  cylinderLayout              String?
-  driveType                   String?
-  gearboxDetail               String?
-  batteryCapacityPercent      Int?
-  acChargerType               String?
-  fastCharging                Boolean        @default(false)
-  wltpRangeKm                 Int?
-  systemPowerKw               Int?
-  systemPowerHp               Int?
-  documentsType               String?
-  inspectionValidUntil        String?
-  frontTireSize               String?
-  rearTireSize                String?
-  interiorFeatures            String?
-  technicalFeatures           String?
-  exteriorFeatures            String?
-  multimediaFeatures          String?
-  extraInfo                   String?
-  historyInternationalEnabled Boolean        @default(true)
-  historyDomesticEnabled      Boolean        @default(true)
-  vatDeductible               Boolean        @default(false)
-  tradeInAvailable            Boolean        @default(false)
-  availableImmediately        Boolean        @default(true)
-  status                      String         @default("PUBLISHED")
-  photos                      ListingPhoto[]
-  favorites                   Favorite[]
-  createdAt                   DateTime       @default(now())
-  updatedAt                   DateTime       @updatedAt
 
-  @@index([status, createdAt])
-  @@index([make, model])
-  @@index([price])
-  @@index([year])
-  @@index([mileage])
-}
 
-model ListingPhoto {
-  id        String   @id @default(cuid())
-  listingId String
-  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
-  path      String
-  sortOrder Int      @default(0)
-  createdAt DateTime @default(now())
 
-  @@index([listingId, sortOrder])
-}
-
-model Favorite {
-  id        String   @id @default(cuid())
-  userId    String
-  listingId String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-
-  @@unique([userId, listingId])
-  @@index([listingId])
-}
-
-model SavedSearch {
-  id        String   @id @default(cuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  name      String
-  query     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([userId, createdAt])
-}
 
 model IntranetAccessRequest {
   id                  String    @id @default(cuid())

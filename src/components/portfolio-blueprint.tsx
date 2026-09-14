@@ -350,6 +350,8 @@ function Filmstrip({
           return (
             <button
               key={article.id}
+              data-flz-editable={`article:${article.id}`}
+              data-flz-label={article.title}
               type="button"
               className="bp-sheet"
               onClick={() => {

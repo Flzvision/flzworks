@@ -4,7 +4,7 @@ import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { Mail, Send, User } from "lucide-react";
 
-export function IntranetAccessRequestForm({ module = "autopiac" }: { module?: string }) {
+export function IntranetAccessRequestForm({ module }: { module: string }) {
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");

@@ -3,7 +3,11 @@ import { prisma } from "@/lib/prisma";
 import { hashOpaqueToken } from "@/lib/intranet-token";
 import { intranetActionTokenSchema } from "@/lib/validation";
 import { setIntranetAccessCookie } from "@/lib/intranet";
-import { AUTOPIAC_BASE_PATH, GUIDE_PROTOTYPE_BASE_PATH, type IntranetModule } from "@/lib/routes";
+import {
+  GUIDE_PROTOTYPE_BASE_PATH,
+  TREE_PROTOTYPE_BASE_PATH,
+  type IntranetModule,
+} from "@/lib/routes";
 
 function htmlResponse(title: string, body: string, status = 200) {
   return new NextResponse(
@@ -68,9 +72,8 @@ export async function GET(request: NextRequest) {
 
   const baseUrl = process.env.APP_BASE_URL || request.nextUrl.origin;
   
-  let redirectPath = AUTOPIAC_BASE_PATH;
-  if (accessRequest.module === "guide_prototype") redirectPath = GUIDE_PROTOTYPE_BASE_PATH;
-  if (accessRequest.module === "tree_prototype") redirectPath = "/intranet/tree_prototype";
+  const redirectPath =
+    accessRequest.module === "tree_prototype" ? TREE_PROTOTYPE_BASE_PATH : GUIDE_PROTOTYPE_BASE_PATH;
 
   const response = NextResponse.redirect(new URL(redirectPath, baseUrl));
   setIntranetAccessCookie(response, claimedRequest.id, accessRequest.module as IntranetModule, maxAgeSeconds);
