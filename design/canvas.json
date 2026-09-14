@@ -1,0 +1,33 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html", "x": 0, "y": 0, "w": 1440, "h": 900, "title": "A · Editorial — editor" },
+    { "file": "EditorialDashboard.dc.html", "x": 1560, "y": 0, "w": 1440, "h": 900, "title": "A · Editorial — dashboard" },
+    { "file": "EditorialDark.dc.html", "x": 3120, "y": 0, "w": 1440, "h": 900, "title": "A · Editorial — dark" },
+    { "file": "Instrument.dc.html", "x": 0, "y": 1060, "w": 1440, "h": 900, "title": "B · Instrument — editor" },
+    { "file": "InstrumentDashboard.dc.html", "x": 1560, "y": 1060, "w": 1440, "h": 900, "title": "B · Instrument — dashboard" }
+  ],
+  "annotations": [
+    {
+      "id": "dir-a",
+      "x": 0,
+      "y": -150,
+      "w": 620,
+      "text": "A · EDITORIAL\nThe studio reads as your site in an editing mode. White rail, hairline separators, Instrument Serif for the region name and section headings, roomy rhythm. Dashboard drops the tab row for a left column, so it never competes with the rail.\n\nTradeoff: lower information density — fewer regions visible before scrolling."
+    },
+    {
+      "id": "dir-b",
+      "x": 0,
+      "y": 910,
+      "w": 620,
+      "text": "B · INSTRUMENT\nSame palette, tool posture. Recessed grey rail with the inspector raised as a white card, tighter rhythm, mono for counts and numbers, serif only for the selected item. The site sits as a document on a desk.\n\nTradeoff: more chrome on screen; reads more like an app than like your site."
+    },
+    {
+      "id": "fixes",
+      "x": 700,
+      "y": -150,
+      "w": 560,
+      "text": "BOTH DIRECTIONS FIX\n· Plain-language groups (\"Page text\", \"Posts\") replace the SETTING / PROJECT / ARTICLE badges\n· Inspector splits into Content and Visibility instead of one flat stack\n· Dashboard opens on a stat band, not two cards and a void\n· One nav hierarchy: the rail owns this page, the sheet owns the whole site"
+    }
+  ],
+  "launch": { "view": "canvas" }
+}

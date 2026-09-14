@@ -1,0 +1,112 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+  <style>
+    body { margin: 0; font-family: "Inter", system-ui, Arial, sans-serif; }
+    a { color: #0066cc; text-decoration: none; } a:hover { color: #004f9e; }
+    .lbl { font-size: 10px; font-weight: 600; letter-spacing: .10em; text-transform: uppercase; color: #6e6e73; }
+    .stat { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 30px; font-weight: 500; letter-spacing: -.02em; color: #1d1d1f; }
+    .cell { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-top: 1px solid rgba(29,29,31,.08); }
+  </style>
+</helmet>
+
+<div style="display: flex; width: 1440px; height: 900px; background: #e8e8ed; font-family: 'Inter', system-ui, sans-serif; color: #1d1d1f; overflow: hidden;">
+
+  <aside style="display: flex; flex-direction: column; gap: 10px; width: 300px; height: 900px; box-sizing: border-box; padding: 14px 12px; background: #f5f5f7; border-right: 1px solid rgba(29,29,31,.14);">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 2px 6px 6px;">
+      <span style="display: flex; align-items: baseline; gap: 5px;">
+        <span style="font: 400 18px/1 'Instrument Serif', Georgia, serif; letter-spacing: -.014em;">Flz</span>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: .10em; text-transform: uppercase; color: #6e6e73;">studio</span>
+      </span>
+      <button style="display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; font-family: 'Inter', sans-serif; font-size: 11.5px; font-weight: 500; color: #ffffff; background: #0066cc; border: 0; border-radius: 8px; cursor: pointer;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+        Dashboard
+      </button>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 5px; padding: 0 6px; opacity: .38;">
+      <span class="lbl">Page text</span>
+      <div style="padding: 6px 9px; font-size: 12.5px; color: #5f5f65;">Hero headline</div>
+      <div style="padding: 6px 9px; font-size: 12.5px; color: #5f5f65;">Hero sub-line</div>
+      <span class="lbl" style="margin-top: 6px;">Posts</span>
+      <div style="padding: 6px 9px; font-size: 12.5px; color: #5f5f65;">Ronin — swordsman</div>
+      <div style="padding: 6px 9px; font-size: 12.5px; color: #5f5f65;">Kessler R-7 coupe</div>
+    </div>
+  </aside>
+
+  <section style="position: relative; flex: 1 1 auto; min-width: 0; padding: 14px; box-sizing: border-box;">
+    <div style="height: 100%; background: #ffffff; border-radius: 14px; opacity: .25;"></div>
+    <div style="position: absolute; inset: 0; background: rgba(29,29,31,.22);"></div>
+
+    <!-- sheet: tabs kept, but demoted to underlined text so the rail stays the primary nav -->
+    <div style="position: absolute; inset: 14px; display: flex; flex-direction: column; background: #ffffff; border-radius: 14px; box-shadow: 0 24px 60px rgba(29,29,31,.24); overflow: hidden;">
+
+      <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; padding: 18px 24px 0; border-bottom: 1px solid rgba(29,29,31,.14);">
+        <nav style="display: flex; gap: 22px;">
+          <span style="padding-bottom: 11px; font-size: 13px; font-weight: 500; color: #1d1d1f; border-bottom: 2px solid #0066cc;">Overview</span>
+          <span style="padding-bottom: 11px; font-size: 13px; color: #5f5f65;">Posts <span style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: #98989f;">6</span></span>
+          <span style="padding-bottom: 11px; font-size: 13px; color: #5f5f65;">Messages</span>
+          <span style="padding-bottom: 11px; font-size: 13px; color: #5f5f65;">Articles <span style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: #98989f;">19</span></span>
+          <span style="padding-bottom: 11px; font-size: 13px; color: #5f5f65;">Social <span style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: #98989f;">3</span></span>
+        </nav>
+        <div style="display: flex; align-items: center; gap: 12px; padding-bottom: 9px;">
+          <div style="display: flex; gap: 1px; padding: 2px; background: #f5f5f7; border-radius: 8px;">
+            <span style="padding: 5px 12px; font-size: 11.5px; font-weight: 500; background: #ffffff; border-radius: 6px;">24h</span>
+            <span style="padding: 5px 12px; font-size: 11.5px; color: #6e6e73;">1mo</span>
+            <span style="padding: 5px 12px; font-size: 11.5px; color: #6e6e73;">1yr</span>
+          </div>
+          <span style="display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: #f5f5f7; border-radius: 8px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5f5f65" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </span>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 18px; flex: 1 1 auto; min-height: 0; padding: 22px 24px;">
+        <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px;">
+          <div style="display: flex; flex-direction: column; gap: 6px; padding: 15px; border: 1px solid rgba(29,29,31,.14); border-radius: 12px;"><span class="lbl">On site</span><span class="stat">0</span></div>
+          <div style="display: flex; flex-direction: column; gap: 6px; padding: 15px; border: 1px solid rgba(29,29,31,.14); border-radius: 12px;"><span class="lbl">Visits 24h</span><span class="stat">0</span></div>
+          <div style="display: flex; flex-direction: column; gap: 6px; padding: 15px; border: 1px solid rgba(29,29,31,.14); border-radius: 12px;"><span class="lbl">Avg visit</span><span class="stat">0s</span></div>
+          <div style="display: flex; flex-direction: column; gap: 6px; padding: 15px; border: 1px solid rgba(29,29,31,.14); border-radius: 12px;"><span class="lbl">Social opens</span><span class="stat">0</span></div>
+          <div style="display: flex; flex-direction: column; gap: 6px; padding: 15px; border: 1px solid rgba(29,29,31,.14); border-radius: 12px;"><span class="lbl">vCard opens</span><span class="stat">0</span></div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 14px; flex: 1 1 auto; min-height: 0;">
+          <div style="display: flex; flex-direction: column; gap: 10px; padding: 18px; background: #f5f5f7; border-radius: 12px;">
+            <span style="font-size: 13px; font-weight: 600;">Social pulse</span>
+            <div style="display: flex; flex-direction: column;">
+              <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 6px;">
+                <span class="lbl">Network</span>
+                <div style="display: flex; gap: 36px;"><span class="lbl" style="width: 60px; text-align: right;">Followers</span><span class="lbl" style="width: 36px; text-align: right;">Posts</span></div>
+              </div>
+              <div class="cell"><span style="font-size: 12.5px;">Instagram</span><div style="display: flex; gap: 36px;"><span style="width: 60px; text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #98989f;">—</span><span style="width: 36px; text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #98989f;">—</span></div></div>
+              <div class="cell"><span style="font-size: 12.5px;">TikTok</span><div style="display: flex; gap: 36px;"><span style="width: 60px; text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #98989f;">—</span><span style="width: 36px; text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #98989f;">—</span></div></div>
+              <div class="cell"><span style="font-size: 12.5px;">LinkedIn</span><div style="display: flex; gap: 36px;"><span style="width: 60px; text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #98989f;">—</span><span style="width: 36px; text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #98989f;">—</span></div></div>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 10px; padding: 18px; background: #f5f5f7; border-radius: 12px;">
+            <span style="font-size: 13px; font-weight: 600;">vCard opens</span>
+            <div style="display: flex; flex-direction: column;">
+              <div class="cell" style="border-top: 0;"><span style="font-size: 12.5px; color: #5f5f65;">Main</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px;">0</span></div>
+              <div class="cell"><span style="font-size: 12.5px; color: #5f5f65;">Salon</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px;">0</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 11px 24px; border-top: 1px solid rgba(29,29,31,.14);">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: #98989f;">floszbeni@gmail.com</span>
+        <a href="#" style="font-size: 11.5px; font-weight: 500;">Sign out</a>
+      </div>
+    </div>
+  </section>
+</div>
+</x-dc>
+</body>
+</html>

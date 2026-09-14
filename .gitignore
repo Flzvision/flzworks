@@ -70,3 +70,7 @@ local_changes_backup/
 # Temporary repro files
 .tmp-repro/
 .codex-tmp/
+
+# Seeded design canvas: a ~2.5 MB bundle regenerated from the .dc.html
+# sources beside it, so the sources are tracked and this is not.
+/design/flz-studio-redesign.html
