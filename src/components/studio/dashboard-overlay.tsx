@@ -41,7 +41,8 @@ interface DashboardOverlayProps {
  * management the rail deliberately does not carry.
  *
  * It floats over the frame rather than displacing it, so dismissing it puts you
- * straight back where you were editing.
+ * straight back where you were editing. Its sections sit in a left column
+ * rather than a tab strip, so the rail stays the only toolbar on screen.
  */
 export function DashboardOverlay({
   onClose,
@@ -72,7 +73,7 @@ export function DashboardOverlay({
 
   const unread = messages.filter((message) => message.status === "NEW").length;
 
-  const tabs: { id: DashboardTab; label: string; icon: React.ReactNode; count?: number }[] = [
+  const sections: { id: DashboardTab; label: string; icon: React.ReactNode; count?: number }[] = [
     { id: "overview", label: "Overview", icon: <Activity size={15} /> },
     { id: "posts", label: "Posts", icon: <Layers size={15} />, count: projects.length },
     { id: "messages", label: "Messages", icon: <Mail size={15} />, count: unread },
@@ -80,75 +81,104 @@ export function DashboardOverlay({
     { id: "social", label: "Social", icon: <Radio size={15} />, count: social.length },
   ];
 
+  const active = sections.find((section) => section.id === tab);
+
+  // Counts the studio already holds. Deliberately not telemetry figures: the
+  // card below polls those live, and a second copy here would go stale beside it.
+  const band = [
+    { label: "Posts", value: projects.length },
+    { label: "Unread messages", value: unread },
+    { label: "Articles", value: articles.length },
+    { label: "Social links", value: social.length },
+  ];
+
   return (
     <div className={s.dashWrap} role="dialog" aria-modal="true" aria-label="Dashboard">
       <div className={s.dashScrim} onClick={onClose} />
 
       <section className={s.dash}>
-        <header className={s.dashHead}>
-          <nav className={s.dashTabs} aria-label="Dashboard sections">
-            {tabs.map((item) => (
+        <nav className={s.dashNav} aria-label="Dashboard sections">
+          <span className={s.railLabel}>The whole site</span>
+
+          <div className={s.dashNavList}>
+            {sections.map((section) => (
               <button
-                key={item.id}
+                key={section.id}
                 type="button"
-                aria-current={tab === item.id ? "page" : undefined}
-                className={`${s.dashTab} ${tab === item.id ? s.dashTabActive : ""}`}
-                onClick={() => setTab(item.id)}
+                aria-current={tab === section.id ? "page" : undefined}
+                className={`${s.dashNavItem} ${tab === section.id ? s.dashNavItemActive : ""}`}
+                onClick={() => setTab(section.id)}
               >
-                {item.icon}
-                {item.label}
-                {item.count !== undefined && item.count > 0 && (
-                  <span className={s.dashCount}>{item.count}</span>
+                {section.icon}
+                <span className={s.dashNavLabel}>{section.label}</span>
+                {section.count !== undefined && section.count > 0 && (
+                  <span className={s.railCount}>{section.count}</span>
                 )}
               </button>
             ))}
-          </nav>
+          </div>
 
-          <button type="button" className={s.dashClose} onClick={onClose} title="Close (Esc)">
-            <X size={16} />
-          </button>
-        </header>
+          <div className={s.dashNavFoot}>
+            <span className={s.railUser} title={userEmail}>
+              {userEmail}
+            </span>
+            <SignOutButton />
+          </div>
+        </nav>
 
-        <div className={s.dashBody}>
-          {/*
-            Panels stay mounted and inactive ones hide with CSS: unmounting would
-            throw away both unsaved drafts and values already saved, so returning
-            to a tab would show stale props and write them back on the next save.
-          */}
-          <div className={`${s.dashPane} ${tab === "overview" ? "" : s.dashPaneHidden}`}>
-            <div className={s.dashGrid}>
-              <TelemetryCard initial={telemetry} live={telemetryLive} />
-              <SocialMetricsCard initial={socialMetrics} live={socialMetricsLive} />
+        <div className={s.dashMain}>
+          <header className={s.dashMainHead}>
+            <h2 className={s.dashTitle}>{active?.label ?? "Overview"}</h2>
+            <button type="button" className={s.dashClose} onClick={onClose} title="Close (Esc)">
+              <X size={16} />
+            </button>
+          </header>
+
+          <div className={s.dashBody}>
+            {/*
+              Panels stay mounted and inactive ones hide with CSS: unmounting would
+              throw away both unsaved drafts and values already saved, so returning
+              to a section would show stale props and write them back on the next save.
+            */}
+            <div className={`${s.dashPane} ${tab === "overview" ? "" : s.dashPaneHidden}`}>
+              <div className={s.dashBand}>
+                {band.map((stat) => (
+                  <div key={stat.label} className={s.dashStat}>
+                    <span className={s.railLabel}>{stat.label}</span>
+                    <span className={s.dashStatValue}>{stat.value}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className={s.dashGrid}>
+                <TelemetryCard initial={telemetry} live={telemetryLive} />
+                <SocialMetricsCard initial={socialMetrics} live={socialMetricsLive} />
+              </div>
+            </div>
+
+            <div className={`${s.dashPane} ${tab === "posts" ? "" : s.dashPaneHidden}`}>
+              <ProjectsPanel projects={projects} setProjects={setProjects} notify={notify} />
+            </div>
+
+            <div className={`${s.dashPane} ${tab === "messages" ? "" : s.dashPaneHidden}`}>
+              <MessagesPanel initial={messages} notify={notify} />
+            </div>
+
+            <div className={`${s.dashPane} ${tab === "articles" ? "" : s.dashPaneHidden}`}>
+              <ArticlesPanel articles={articles} notify={notify} />
+            </div>
+
+            <div className={`${s.dashPane} ${tab === "social" ? "" : s.dashPaneHidden}`}>
+              <SocialPanel
+                initial={social}
+                initialMetrics={socialMetrics}
+                importConfiguration={socialImportConfiguration}
+                onProjectsChanged={onProjectsChanged}
+                notify={notify}
+              />
             </div>
           </div>
-
-          <div className={`${s.dashPane} ${tab === "posts" ? "" : s.dashPaneHidden}`}>
-            <ProjectsPanel projects={projects} setProjects={setProjects} notify={notify} />
-          </div>
-
-          <div className={`${s.dashPane} ${tab === "messages" ? "" : s.dashPaneHidden}`}>
-            <MessagesPanel initial={messages} notify={notify} />
-          </div>
-
-          <div className={`${s.dashPane} ${tab === "articles" ? "" : s.dashPaneHidden}`}>
-            <ArticlesPanel articles={articles} notify={notify} />
-          </div>
-
-          <div className={`${s.dashPane} ${tab === "social" ? "" : s.dashPaneHidden}`}>
-            <SocialPanel
-              initial={social}
-              initialMetrics={socialMetrics}
-              importConfiguration={socialImportConfiguration}
-              onProjectsChanged={onProjectsChanged}
-              notify={notify}
-            />
-          </div>
         </div>
-
-        <footer className={s.dashFoot}>
-          <span className={s.dashUser}>{userEmail}</span>
-          <SignOutButton />
-        </footer>
       </section>
     </div>
   );

@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap">
+  <style>
+    body { margin: 0; font-family: "Inter", system-ui, Arial, sans-serif; }
+    a { color: #0066cc; text-decoration: none; } a:hover { color: #004f9e; }
+    .lbl { font-size: 11px; font-weight: 600; letter-spacing: .10em; text-transform: uppercase; color: #6e6e73; }
+    .num { font: 400 38px/1 "Instrument Serif", Georgia, serif; letter-spacing: -.014em; color: #1d1d1f; }
+  </style>
+</helmet>
+
+<div style="display: flex; width: 1440px; height: 900px; background: #f5f5f7; font-family: 'Inter', system-ui, sans-serif; color: #1d1d1f; overflow: hidden;">
+
+  <!-- rail stays reachable behind the sheet -->
+  <aside style="display: flex; flex-direction: column; gap: 16px; width: 300px; height: 900px; box-sizing: border-box; padding: 20px; background: #ffffff; border-right: 1px solid rgba(29,29,31,.14);">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+      <span style="font: 400 22px/1 'Instrument Serif', Georgia, serif; letter-spacing: -.014em;">Flz<span style="color: #6e6e73;">.</span>studio</span>
+      <button style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; color: #0066cc; background: rgba(0,102,204,.08); border: 1px solid rgba(0,102,204,.22); border-radius: 999px; cursor: pointer;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+        Dashboard
+      </button>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 6px; opacity: .38;">
+      <span class="lbl">Page text</span>
+      <div style="padding: 7px 10px; font-size: 13px; color: #5f5f65;">Hero headline</div>
+      <div style="padding: 7px 10px; font-size: 13px; color: #5f5f65;">Hero sub-line</div>
+      <div style="padding: 7px 10px; font-size: 13px; color: #5f5f65;">Projects heading</div>
+      <span class="lbl" style="margin-top: 8px;">Posts</span>
+      <div style="padding: 7px 10px; font-size: 13px; color: #5f5f65;">Ronin — swordsman</div>
+      <div style="padding: 7px 10px; font-size: 13px; color: #5f5f65;">Kessler R-7 coupe</div>
+    </div>
+  </aside>
+
+  <!-- the site half, with the dashboard sheet over it -->
+  <section style="position: relative; flex: 1 1 auto; min-width: 0; background: #f5f5f7;">
+    <div style="padding: 56px 56px 0; opacity: .30;">
+      <div style="font: 400 60px/1.03 'Instrument Serif', Georgia, serif; letter-spacing: -.014em;">Games and 3D,<br>built in public.</div>
+    </div>
+
+    <div style="position: absolute; inset: 0; background: rgba(29,29,31,.28);"></div>
+
+    <div style="position: absolute; inset: 22px; display: flex; background: #ffffff; border-radius: 28px; box-shadow: 0 30px 80px rgba(29,29,31,.22); overflow: hidden;">
+
+      <!-- sheet sub-nav: a column, not tabs — so it never reads as a second toolbar -->
+      <nav style="display: flex; flex-direction: column; gap: 2px; flex: none; width: 188px; padding: 24px 14px; box-sizing: border-box; background: #f5f5f7; border-right: 1px solid rgba(29,29,31,.14);">
+        <span class="lbl" style="padding: 0 10px 10px;">The whole site</span>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 9px 11px; font-size: 13px; font-weight: 500; color: #1d1d1f; background: #ffffff; border-radius: 10px;">Overview</div>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 9px 11px; font-size: 13px; color: #5f5f65;">Posts <span style="font-size: 11px; color: #98989f;">6</span></div>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 9px 11px; font-size: 13px; color: #5f5f65;">Messages</div>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 9px 11px; font-size: 13px; color: #5f5f65;">Articles <span style="font-size: 11px; color: #98989f;">19</span></div>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 9px 11px; font-size: 13px; color: #5f5f65;">Social <span style="font-size: 11px; color: #98989f;">3</span></div>
+
+        <div style="flex: 1 1 auto;"></div>
+        <div style="display: flex; flex-direction: column; gap: 8px; padding: 12px 11px 0; border-top: 1px solid rgba(29,29,31,.14);">
+          <span style="font-size: 11px; color: #98989f;">floszbeni@gmail.com</span>
+          <a href="#" style="font-size: 11px; font-weight: 500;">Sign out</a>
+        </div>
+      </nav>
+
+      <!-- content: a stat band first, so the view never opens on a void -->
+      <div style="display: flex; flex-direction: column; gap: 26px; flex: 1 1 auto; min-width: 0; padding: 30px 32px;">
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;">
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <span style="font: 400 26px/1.1 'Instrument Serif', Georgia, serif; letter-spacing: -.014em;">Overview</span>
+            <span style="font-size: 13px; color: #6e6e73;">Last 24 hours across flz.works</span>
+          </div>
+          <div style="display: flex; gap: 2px; padding: 3px; background: #f5f5f7; border-radius: 999px;">
+            <span style="padding: 6px 15px; font-size: 12px; font-weight: 500; color: #1d1d1f; background: #ffffff; border-radius: 999px;">24h</span>
+            <span style="padding: 6px 15px; font-size: 12px; color: #6e6e73;">1mo</span>
+            <span style="padding: 6px 15px; font-size: 12px; color: #6e6e73;">1yr</span>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px;">
+          <div style="display: flex; flex-direction: column; gap: 7px; padding: 18px; background: #f5f5f7; border-radius: 14px;">
+            <span class="lbl">On site now</span><span class="num">0</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 7px; padding: 18px; background: #f5f5f7; border-radius: 14px;">
+            <span class="lbl">Visits</span><span class="num">0</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 7px; padding: 18px; background: #f5f5f7; border-radius: 14px;">
+            <span class="lbl">Avg visit</span><span class="num">0<span style="font-size: 18px; color: #6e6e73;">s</span></span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 7px; padding: 18px; background: #f5f5f7; border-radius: 14px;">
+            <span class="lbl">Social opens</span><span class="num">0</span>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; flex: 1 1 auto; min-height: 0;">
+          <div style="display: flex; flex-direction: column; gap: 14px; padding: 20px; border: 1px solid rgba(29,29,31,.14); border-radius: 24px;">
+            <span style="font: 400 18px/1.1 'Instrument Serif', Georgia, serif;">vCard opens</span>
+            <div style="display: flex; flex-direction: column; gap: 1px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; padding: 11px 0; border-bottom: 1px solid rgba(29,29,31,.08);"><span style="font-size: 13px; color: #5f5f65;">Main</span><span style="font-size: 13px; font-weight: 500;">0</span></div>
+              <div style="display: flex; align-items: center; justify-content: space-between; padding: 11px 0;"><span style="font-size: 13px; color: #5f5f65;">Salon</span><span style="font-size: 13px; font-weight: 500;">0</span></div>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 14px; padding: 20px; border: 1px solid rgba(29,29,31,.14); border-radius: 24px;">
+            <span style="font: 400 18px/1.1 'Instrument Serif', Georgia, serif;">Social pulse</span>
+            <div style="display: flex; flex-direction: column; gap: 1px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; padding: 0 0 8px;">
+                <span class="lbl">Network</span>
+                <div style="display: flex; gap: 40px;"><span class="lbl">Followers</span><span class="lbl">Posts</span></div>
+              </div>
+              <div style="display: flex; align-items: center; justify-content: space-between; padding: 11px 0; border-top: 1px solid rgba(29,29,31,.08);"><span style="font-size: 13px; color: #1d1d1f;">Instagram</span><div style="display: flex; gap: 40px;"><span style="width: 62px; text-align: right; font-size: 13px; color: #98989f;">—</span><span style="width: 34px; text-align: right; font-size: 13px; color: #98989f;">—</span></div></div>
+              <div style="display: flex; align-items: center; justify-content: space-between; padding: 11px 0; border-top: 1px solid rgba(29,29,31,.08);"><span style="font-size: 13px; color: #1d1d1f;">TikTok</span><div style="display: flex; gap: 40px;"><span style="width: 62px; text-align: right; font-size: 13px; color: #98989f;">—</span><span style="width: 34px; text-align: right; font-size: 13px; color: #98989f;">—</span></div></div>
+              <div style="display: flex; align-items: center; justify-content: space-between; padding: 11px 0; border-top: 1px solid rgba(29,29,31,.08);"><span style="font-size: 13px; color: #1d1d1f;">LinkedIn</span><div style="display: flex; gap: 40px;"><span style="width: 62px; text-align: right; font-size: 13px; color: #98989f;">—</span><span style="width: 34px; text-align: right; font-size: 13px; color: #98989f;">—</span></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+</x-dc>
+</body>
+</html>
