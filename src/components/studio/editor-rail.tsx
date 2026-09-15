@@ -11,12 +11,26 @@ import {
   Save,
   Star,
 } from "lucide-react";
-import type { EditableSection } from "@/lib/studio/edit-protocol";
+import type { EditableKind, EditableSection } from "@/lib/studio/edit-protocol";
 import { EDITABLE_PAGES, EDITABLE_PAGE_GROUPS } from "@/lib/studio/editable-pages";
 import type { PortfolioArticleWithImages } from "@/lib/portfolio-sync";
 import type { FlzProjectData } from "@/components/studio/types";
 import { Field, Spinner, Switch, type Notify } from "@/components/studio/ui";
 import s from "@/components/studio/studio.module.css";
+
+/**
+ * What each kind is called in the rail. The data model's own words — setting,
+ * project, article — are not what someone editing the page is thinking about.
+ */
+const GROUP_LABELS: Record<EditableKind, string> = {
+  setting: "Page text",
+  project: "Posts",
+  article: "Articles",
+  social: "Social",
+};
+
+/** Groups appear in this order regardless of where they sit on the page. */
+const GROUP_ORDER: EditableKind[] = ["setting", "project", "article", "social"];
 
 /** Per-key presentation for the settings the landing page exposes. */
 const SETTING_META: Record<string, { label: string; hint?: string; multiline?: boolean }> = {
@@ -73,6 +87,20 @@ export function EditorRail({
     [sections, selected],
   );
 
+  const groups = useMemo(() => {
+    const byKind = new Map<EditableKind, EditableSection[]>();
+    for (const section of sections) {
+      const existing = byKind.get(section.kind);
+      if (existing) existing.push(section);
+      else byKind.set(section.kind, [section]);
+    }
+    // Sections arrive in document order, so each group keeps the page's order.
+    return GROUP_ORDER.flatMap((kind) => {
+      const items = byKind.get(kind);
+      return items ? [{ kind, label: GROUP_LABELS[kind], items }] : [];
+    });
+  }, [sections]);
+
   return (
     <aside className={s.rail} aria-label="Editor">
       <header className={s.railHead}>
@@ -120,11 +148,6 @@ export function EditorRail({
       </div>
 
       <div className={s.railSections}>
-        <div className={s.railLabel}>
-          Editable regions
-          <span className={s.railCount}>{sections.length}</span>
-        </div>
-
         {!ready && <p className={s.railNote}>Connecting to the page…</p>}
 
         {ready && sections.length === 0 && (
@@ -133,22 +156,32 @@ export function EditorRail({
           </p>
         )}
 
-        <ul className={s.railList}>
-          {sections.map((section) => (
-            <li key={section.id}>
-              <button
-                type="button"
-                className={`${s.railItem} ${section.id === selected ? s.railItemActive : ""}`}
-                onClick={() => onSelect(section.id === selected ? null : section.id)}
-              >
-                <span className={s.railKind} data-kind={section.kind}>
-                  {section.kind}
-                </span>
-                <span className={s.railItemLabel}>{section.label}</span>
-              </button>
-            </li>
+        <div className={s.railGroups}>
+          {groups.map((group) => (
+            <div key={group.kind} className={s.railGroup}>
+              <div className={s.railLabel}>
+                {group.label}
+                {group.items.length > 1 && (
+                  <span className={s.railCount}>{group.items.length}</span>
+                )}
+              </div>
+              <ul className={s.railList}>
+                {group.items.map((section) => (
+                  <li key={section.id}>
+                    <button
+                      type="button"
+                      className={`${s.railItem} ${section.id === selected ? s.railItemActive : ""}`}
+                      onClick={() => onSelect(section.id === selected ? null : section.id)}
+                    >
+                      <span className={s.railItemMark} aria-hidden="true" />
+                      <span className={s.railItemLabel}>{section.label}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
 
       <div className={s.railInspector}>
@@ -255,6 +288,8 @@ function SettingInspector({
   return (
     <div className={s.inspector}>
       <h3 className={s.inspectorTitle}>{meta.label}</h3>
+
+      <div className={s.inspectorScroll}>
       <Field label={settingKey} hint={meta.hint}>
         {meta.multiline ? (
           <textarea
@@ -273,6 +308,8 @@ function SettingInspector({
           />
         )}
       </Field>
+      </div>
+
       <button type="button" className={s.railSave} disabled={!dirty || saving} onClick={save}>
         {saving ? <Spinner size={13} /> : <Save size={13} />}
         {dirty ? "Save" : "Saved"}
@@ -342,7 +379,12 @@ function ProjectInspector({
 
   return (
     <div className={s.inspector}>
-      <h3 className={s.inspectorTitle}>Post</h3>
+      <h3 className={s.inspectorTitle}>{project.title || "Untitled post"}</h3>
+
+      <div className={s.inspectorScroll}>
+
+      <div className={s.inspectorGroup}>
+        <span className={s.railLabel}>Content</span>
 
       <Field label="Title">
         <input
@@ -380,7 +422,10 @@ function ProjectInspector({
           onChange={(event) => set("body", event.target.value)}
         />
       </Field>
+      </div>
 
+      <div className={s.inspectorGroup}>
+        <span className={s.railLabel}>Visibility</span>
       <div className={s.inspectorToggles}>
         <button
           type="button"
@@ -398,6 +443,9 @@ function ProjectInspector({
           <Star size={13} />
           {draft.featured ? "Featured" : "Not featured"}
         </button>
+      </div>
+      </div>
+
       </div>
 
       <button type="button" className={s.railSave} disabled={!dirty || saving} onClick={save}>
@@ -466,15 +514,22 @@ function ArticleInspector({
     <div className={s.inspector}>
       <h3 className={s.inspectorTitle}>{article.title}</h3>
 
-      <Field label="Category">
-        <input
-          className={s.input}
-          maxLength={100}
-          value={category}
-          onChange={(event) => setCategory(event.target.value)}
-        />
-      </Field>
+      <div className={s.inspectorScroll}>
 
+      <div className={s.inspectorGroup}>
+        <span className={s.railLabel}>Content</span>
+        <Field label="Category">
+          <input
+            className={s.input}
+            maxLength={100}
+            value={category}
+            onChange={(event) => setCategory(event.target.value)}
+          />
+        </Field>
+      </div>
+
+      <div className={s.inspectorGroup}>
+        <span className={s.railLabel}>Visibility</span>
       <div className={s.inspectorToggles}>
         <button
           type="button"
@@ -484,6 +539,9 @@ function ArticleInspector({
           {visible ? <Eye size={13} /> : <EyeOff size={13} />}
           {visible ? "Visible" : "Hidden"}
         </button>
+      </div>
+      </div>
+
       </div>
 
       <button type="button" className={s.railSave} disabled={!dirty || saving} onClick={save}>

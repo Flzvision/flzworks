@@ -40,7 +40,7 @@
   /* Keep every typography role on the same Inter family. These tokens remain
      separate so sizing, weight and tracking can still vary by role. */
   --st-font-primary: var(--font-sans), "Inter", Arial, sans-serif;
-  --st-display: var(--st-font-primary);
+  --st-display: var(--font-display), "Instrument Serif", Georgia, serif;
   --st-sans: var(--st-font-primary);
   --st-mono: var(--st-font-primary);
 
@@ -1128,6 +1128,8 @@
   background: var(--st-accent);
 }
 .switchText {
+  display: flex;
+  flex-direction: column;
   min-width: 0;
 }
 .switchLabel {
@@ -2085,29 +2087,29 @@
    A compact desktop workspace with opaque hierarchy and shared semantic tokens.
    This final layer intentionally replaces the earlier decorative glass skin. */
 .root {
-  --st-bg: #0b0b0d;
+  --st-bg: #111113;
   --st-panel: #1c1c1e;
   --st-panel-2: #2c2c2e;
   --st-raised: #242426;
   --st-sunken: #111113;
   --st-fg: #f5f5f7;
-  --st-fg-2: #b8b8be;
-  --st-fg-3: #a1a1a6;
-  --st-line: rgba(255,255,255,.12);
-  --st-line-2: rgba(255,255,255,.18);
-  --st-line-3: rgba(255,255,255,.3);
-  --st-accent: #0a84ff;
-  --st-accent-soft: rgba(10,132,255,.15);
-  --st-accent-line: rgba(10,132,255,.42);
+  --st-fg-2: #b7b7bd;
+  --st-fg-3: #98989f;
+  --st-line: rgba(255,255,255,.14);
+  --st-line-2: rgba(255,255,255,.20);
+  --st-line-3: rgba(255,255,255,.32);
+  --st-accent: #2997ff;
+  --st-accent-soft: rgba(41,151,255,.14);
+  --st-accent-line: rgba(41,151,255,.32);
   --st-live: #30d158;
   --st-live-soft: rgba(48,209,88,.13);
   --st-live-line: rgba(48,209,88,.34);
   --st-warn: #ff6961;
   --st-warn-soft: rgba(255,105,97,.13);
   --st-warn-line: rgba(255,105,97,.34);
-  --st-r-sm: 10px;
+  --st-r-sm: 12px;
   --st-r-md: 14px;
-  --st-r-lg: 18px;
+  --st-r-lg: 24px;
   --st-shadow: 0 16px 48px rgba(0,0,0,.28);
   background: var(--st-bg);
 }
@@ -2525,9 +2527,10 @@
 
 .railBrand {
   font-family: var(--st-display);
-  font-size: 15px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.014em;
   color: var(--st-fg);
   text-decoration: none;
 }
@@ -2536,38 +2539,37 @@
 
 .railDashBtn {
   display: inline-flex;
+  flex: none;
   align-items: center;
   gap: 6px;
-  padding: 7px 11px;
+  padding: 7px 12px;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 500;
   color: var(--st-fg);
   cursor: pointer;
-  background: var(--st-accent-soft);
-  border: 1px solid var(--st-accent-line);
+  background: var(--st-sunken);
+  border: 1px solid var(--st-line);
   border-radius: var(--st-r-pill);
-  transition: background 160ms var(--st-ease);
+  transition: background 160ms var(--st-ease), border-color 160ms var(--st-ease);
 }
 
-.railDashBtn:hover { background: var(--st-accent-line); }
+.railDashBtn:hover { border-color: var(--st-line-2); }
 
 .railBlock {
   flex: none;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 12px;
-  background: var(--st-raised);
-  border: 1px solid var(--st-line);
-  border-radius: var(--st-r-md);
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--st-line);
 }
 
 .railLabel {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 10px;
-  font-weight: 800;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--st-fg-3);
@@ -2598,7 +2600,33 @@
   flex-direction: column;
   gap: 8px;
   min-height: 0;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--st-line);
 }
+
+.railGroups {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  /* The region list is navigation; the inspector is the work surface, so cap
+     the list and give the remaining height to the fields. */
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.railGroup { display: flex; flex-direction: column; gap: 6px; }
+
+/* The dot only marks the selected row; an unselected one keeps the space so
+   labels stay on one optical line. */
+.railItemMark {
+  flex: none;
+  width: 3px;
+  height: 14px;
+  background: transparent;
+  border-radius: var(--st-r-pill);
+}
+
+.railItemActive .railItemMark { background: var(--st-accent); }
 
 .railNote {
   display: flex;
@@ -2613,11 +2641,9 @@
 .railList {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  max-height: 34vh;
+  gap: 1px;
   margin: 0;
   padding: 0;
-  overflow-y: auto;
   list-style: none;
 }
 
@@ -2638,12 +2664,12 @@
   transition: background 140ms var(--st-ease), color 140ms var(--st-ease);
 }
 
-.railItem:hover { color: var(--st-fg); background: var(--st-raised); }
+.railItem:hover { color: var(--st-fg); background: var(--st-sunken); }
 
 .railItemActive {
+  font-weight: 500;
   color: var(--st-fg);
   background: var(--st-accent-soft);
-  border-color: var(--st-accent-line);
 }
 
 .railKind {
@@ -2665,29 +2691,47 @@
 }
 
 .railInspector {
+  display: flex;
+  flex-direction: column;
   flex: 1 1 auto;
   min-height: 0;
   padding-top: 4px;
-  overflow-y: auto;
+  overflow: hidden;
   border-top: 1px solid var(--st-line);
 }
 
 .inspector {
   display: flex;
   flex-direction: column;
+  flex: 1 1 auto;
   gap: 10px;
+  min-height: 0;
   padding-top: 12px;
-  /* Room for the sticky save button to sit over without hiding the last field. */
-  padding-bottom: 6px;
+}
+
+/* Only the fields scroll. The save below them is never covered, whatever the
+   record's shape, so it needs no sticky trick and no trailing spacer. */
+.inspectorScroll {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding-bottom: 2px;
+  overflow-y: auto;
 }
 
 .inspectorTitle {
   margin: 0;
   font-family: var(--st-display);
-  font-size: 14px;
-  font-weight: 800;
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.14;
+  letter-spacing: -0.014em;
   color: var(--st-fg);
 }
+
+.inspectorGroup { display: flex; flex-direction: column; gap: 10px; }
 
 .inspectorToggles { display: flex; flex-wrap: wrap; gap: 6px; }
 
@@ -2712,10 +2756,8 @@
 }
 
 .railSave {
-  /* Sticks to the foot of the scrolling inspector so a long form never puts
-     the save out of reach. */
-  position: sticky;
-  bottom: 0;
+  flex: none;
+  color: #ffffff;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2723,13 +2765,11 @@
   margin-top: 2px;
   padding: 9px 12px;
   font-size: 12.5px;
-  font-weight: 800;
-  color: #241c07;
+  font-weight: 600;
   cursor: pointer;
   background: var(--st-accent);
   border: 0;
   border-radius: var(--st-r-pill);
-  box-shadow: 0 -8px 16px -8px var(--st-panel);
 }
 
 .railSave:disabled { color: var(--st-fg-3); cursor: default; background: var(--st-raised); }
@@ -2781,15 +2821,14 @@
 .dashScrim {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(3px);
+  background: rgba(29, 29, 31, 0.28);
+  backdrop-filter: blur(2px);
 }
 
 .dash {
   position: absolute;
-  inset: 16px;
+  inset: 20px;
   display: flex;
-  flex-direction: column;
   min-height: 0;
   overflow: hidden;
   background: var(--st-panel);
@@ -2798,13 +2837,102 @@
   box-shadow: var(--st-shadow);
 }
 
-.dashHead {
+/* The sheet is a two-column layout now: sections on the left, content right. */
+.dashNav {
   display: flex;
+  flex-direction: column;
   gap: 10px;
+  flex: none;
+  width: 188px;
+  padding: 22px 14px;
+  box-sizing: border-box;
+  background: var(--st-sunken);
+  border-right: 1px solid var(--st-line);
+}
+
+.dashNavList { display: flex; flex-direction: column; gap: 2px; }
+
+.dashNavItem {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 9px 11px;
+  font-family: var(--st-sans);
+  font-size: 13px;
+  color: var(--st-fg-2);
+  text-align: left;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  border-radius: var(--st-r-sm);
+  transition: background 140ms var(--st-ease), color 140ms var(--st-ease);
+}
+
+.dashNavItem:hover { color: var(--st-fg); background: var(--st-panel); }
+
+.dashNavItemActive {
+  font-weight: 500;
+  color: var(--st-fg);
+  background: var(--st-panel);
+}
+
+.dashNavLabel { flex: 1 1 auto; }
+
+.dashNavFoot {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--st-line);
+}
+
+.dashMain { display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; min-height: 0; }
+
+.dashMainHead {
+  display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 14px;
+  gap: 12px;
+  padding: 20px 24px 16px;
   border-bottom: 1px solid var(--st-line);
+}
+
+.dashTitle {
+  margin: 0;
+  font-family: var(--st-display);
+  font-size: 26px;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.014em;
+  color: var(--st-fg);
+}
+
+/* Counts the studio already holds, so the view never opens on a void. */
+.dashBand {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.dashStat {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 16px 18px;
+  background: var(--st-sunken);
+  border-radius: var(--st-r-md);
+}
+
+.dashStatValue {
+  font-family: var(--st-display);
+  font-size: 34px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.014em;
+  color: var(--st-fg);
 }
 
 .dashTabs { display: flex; flex-wrap: wrap; gap: 4px; }
@@ -2848,14 +2976,14 @@
   height: 32px;
   color: var(--st-fg-2);
   cursor: pointer;
-  background: var(--st-raised);
-  border: 1px solid var(--st-line);
+  background: var(--st-sunken);
+  border: 0;
   border-radius: var(--st-r-pill);
 }
 
 .dashClose:hover { color: var(--st-fg); }
 
-.dashBody { flex: 1 1 auto; min-height: 0; padding: 16px; overflow-y: auto; }
+.dashBody { flex: 1 1 auto; min-height: 0; padding: 20px 24px 24px; overflow-y: auto; }
 
 .dashPane { display: block; }
 
@@ -2863,8 +2991,9 @@
 
 .dashGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+  align-items: start;
 }
 
 .dashFoot {
@@ -2898,5 +3027,19 @@
   .workspace { grid-template-columns: 1fr; grid-template-rows: minmax(0, 46%) 1fr; }
   .rail { border-right: 0; border-bottom: 1px solid var(--st-line); }
   .railList { max-height: 22vh; }
-  .dash { inset: 8px; }
+  .dash { inset: 8px; flex-direction: column; }
+  .dashNav {
+    width: auto;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 12px;
+    overflow-x: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--st-line);
+  }
+  .dashNav > .railLabel,
+  .dashNavFoot { display: none; }
+  .dashNavList { flex-direction: row; }
+  .dashNavItem { white-space: nowrap; }
 }

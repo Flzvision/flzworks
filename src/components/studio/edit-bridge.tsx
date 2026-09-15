@@ -212,11 +212,18 @@ export function EditBridge() {
             transition: box-shadow 120ms ease, background-color 120ms ease;
           }
           [${EDITABLE_ATTR}]:hover {
-            box-shadow: 0 0 0 2px rgba(56,189,248,.9), 0 0 0 6px rgba(56,189,248,.22) !important;
+            box-shadow: 0 0 0 2px rgba(0,102,204,.55), 0 0 0 6px rgba(0,102,204,.14) !important;
           }
           [${SELECTED_ATTR}="true"] {
-            box-shadow: 0 0 0 2px rgba(45,212,191,1), 0 0 0 8px rgba(45,212,191,.28) !important;
-            background-color: rgba(45,212,191,.06) !important;
+            box-shadow: 0 0 0 2px rgba(0,102,204,1), 0 0 0 7px rgba(0,102,204,.18) !important;
+          }
+          @media (prefers-color-scheme: dark) {
+            [${EDITABLE_ATTR}]:hover {
+              box-shadow: 0 0 0 2px rgba(41,151,255,.6), 0 0 0 6px rgba(41,151,255,.16) !important;
+            }
+            [${SELECTED_ATTR}="true"] {
+              box-shadow: 0 0 0 2px rgba(41,151,255,1), 0 0 0 7px rgba(41,151,255,.22) !important;
+            }
           }
         `,
       }}

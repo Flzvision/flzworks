@@ -18,14 +18,17 @@ type StudioTheme = "light" | "dark";
 const THEME_STORAGE_KEY = "flz-studio-theme";
 const themeListeners = new Set<() => void>();
 
+// Light by default, matching the site: the studio sits beside the real page in
+// the frame, so opening on a dark chrome next to a light page reads as two
+// different products.
 function getThemeSnapshot(): StudioTheme {
   const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
   if (stored === "light" || stored === "dark") return stored;
-  return "dark";
+  return "light";
 }
 
 function getServerThemeSnapshot(): StudioTheme {
-  return "dark";
+  return "light";
 }
 
 function subscribeToTheme(listener: () => void) {
