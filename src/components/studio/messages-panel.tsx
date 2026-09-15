@@ -35,11 +35,15 @@ export function MessagesPanel({ initial, notify }: { initial: StudioMessage[]; n
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   const unreadCount = messages.filter((item) => item.status === "NEW").length;
+  // The open message always stays in the list. Opening an unread one marks it
+  // read, which would otherwise drop it out of the Unread filter the instant
+  // you started reading it.
   const filtered = useMemo(() => messages.filter((item) => {
+    if (item.id === selectedId) return true;
     if (filter === "archived") return item.status === "ARCHIVED";
     if (filter === "unread") return item.status === "NEW";
     return item.status !== "ARCHIVED";
-  }), [filter, messages]);
+  }), [filter, messages, selectedId]);
 
   const updateStatus = async (id: string, status: MessageStatus) => {
     setBusyId(id);

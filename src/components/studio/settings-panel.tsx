@@ -29,9 +29,12 @@ function normalize(settings: SettingsMap): SettingsMap {
 export function SettingsPanel({
   initialSettings,
   notify,
+  onSaved,
 }: {
   initialSettings: SettingsMap;
   notify: Notify;
+  /** Hands confirmed values back so the editor rail sees the same settings. */
+  onSaved?: (settings: SettingsMap) => void;
 }) {
   const [saved, setSaved] = useState<SettingsMap>(() => normalize(initialSettings));
   const [form, setForm] = useState<SettingsMap>(() => normalize(initialSettings));
@@ -57,18 +60,31 @@ export function SettingsPanel({
   const discordValid = /^https?:\/\//i.test(form.discord_url.trim());
 
   const save = async () => {
+    // Only the keys actually edited here. The rail edits the same settings from
+    // the page, so posting the whole form would revert anything it saved after
+    // this panel was mounted.
+    const changed = Object.fromEntries(
+      KEYS.filter((key) => (form[key] ?? "") !== (saved[key] ?? "")).map((key) => [
+        key,
+        form[key] ?? "",
+      ]),
+    );
+
+    if (Object.keys(changed).length === 0) return;
+
     setSaving(true);
     try {
       const res = await fetch("/api/flz/settings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(changed),
       });
       const data = await res.json().catch(() => null);
       if (!res.ok || !data?.success) throw new Error(data?.error || "Could not save the settings");
       const confirmed = normalize({ ...form, ...data.settings });
       setForm(confirmed);
       setSaved(confirmed);
+      onSaved?.(confirmed);
       notify("Site settings saved");
     } catch (err) {
       notify(err instanceof Error ? err.message : "Could not save the settings", "error");

@@ -489,14 +489,10 @@ function ArticleInspector({
       const res = await fetch("/api/portfolio/edit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id: article.id,
-          title: article.title,
-          description: article.description,
-          date: article.date,
-          visible,
-          category,
-        }),
+        // Only the two fields this inspector owns. The articles prop is a
+        // page-load snapshot, so resending title/date/description from it would
+        // revert anything the dashboard's Articles panel saved since.
+        body: JSON.stringify({ id: article.id, visible, category }),
       });
       const data = await res.json().catch(() => null);
       if (!res.ok || !data?.success) throw new Error(data?.error || "Could not save");

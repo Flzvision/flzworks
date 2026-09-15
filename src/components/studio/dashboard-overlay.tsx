@@ -1,7 +1,7 @@
 "use client";
 
 import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
-import { Activity, FolderOpen, Layers, LogOut, Mail, Radio, X } from "lucide-react";
+import { Activity, FolderOpen, Layers, LogOut, Mail, Radio, SlidersHorizontal, X } from "lucide-react";
 import type { PortfolioArticleWithImages } from "@/lib/portfolio-sync";
 import type { SocialEntry } from "@/lib/social-config";
 import type { SocialMetricsSnapshot } from "@/lib/social-metrics";
@@ -10,13 +10,14 @@ import type { FlzProjectData } from "@/components/studio/types";
 import { ArticlesPanel } from "@/components/studio/articles-panel";
 import { MessagesPanel, type StudioMessage } from "@/components/studio/messages-panel";
 import { ProjectsPanel } from "@/components/studio/projects-panel";
+import { SettingsPanel } from "@/components/studio/settings-panel";
 import { SocialPanel } from "@/components/studio/social-panel";
 import { SocialMetricsCard } from "@/components/studio/social-metrics-card";
 import { TelemetryCard } from "@/components/studio/telemetry-card";
 import { Spinner, type Notify } from "@/components/studio/ui";
 import s from "@/components/studio/studio.module.css";
 
-type DashboardTab = "overview" | "posts" | "messages" | "articles" | "social";
+type DashboardTab = "overview" | "posts" | "messages" | "articles" | "social" | "settings";
 
 interface DashboardOverlayProps {
   onClose: () => void;
@@ -31,6 +32,8 @@ interface DashboardOverlayProps {
   socialMetrics: SocialMetricsSnapshot;
   socialMetricsLive: boolean;
   socialImportConfiguration: { instagram: boolean; tiktok: boolean };
+  settings: Record<string, string>;
+  onSettingsChange: (settings: Record<string, string>) => void;
   onProjectsChanged: () => Promise<void>;
   userEmail: string;
   notify: Notify;
@@ -56,6 +59,8 @@ export function DashboardOverlay({
   socialMetrics,
   socialMetricsLive,
   socialImportConfiguration,
+  settings,
+  onSettingsChange,
   onProjectsChanged,
   userEmail,
   notify,
@@ -79,6 +84,7 @@ export function DashboardOverlay({
     { id: "messages", label: "Messages", icon: <Mail size={15} />, count: unread },
     { id: "articles", label: "Articles", icon: <FolderOpen size={15} />, count: articles.length },
     { id: "social", label: "Social", icon: <Radio size={15} />, count: social.length },
+    { id: "settings", label: "Settings", icon: <SlidersHorizontal size={15} /> },
   ];
 
   const active = sections.find((section) => section.id === tab);
@@ -166,6 +172,19 @@ export function DashboardOverlay({
 
             <div className={`${s.dashPane} ${tab === "articles" ? "" : s.dashPaneHidden}`}>
               <ArticlesPanel articles={articles} notify={notify} />
+            </div>
+
+            {/*
+              Settings the rail cannot reach: only the three rendered on the
+              home page carry editable markers, so the counters, the build date
+              and the Discord link live here.
+            */}
+            <div className={`${s.dashPane} ${tab === "settings" ? "" : s.dashPaneHidden}`}>
+              <SettingsPanel
+                initialSettings={settings}
+                notify={notify}
+                onSaved={onSettingsChange}
+              />
             </div>
 
             <div className={`${s.dashPane} ${tab === "social" ? "" : s.dashPaneHidden}`}>

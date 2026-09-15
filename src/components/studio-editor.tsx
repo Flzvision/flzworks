@@ -159,6 +159,8 @@ export function StudioEditor({
               socialMetrics={socialMetrics}
               socialMetricsLive={socialMetricsLive}
               socialImportConfiguration={socialImportConfiguration}
+              settings={settings}
+              onSettingsChange={setSettings}
               onProjectsChanged={refreshProjects}
               userEmail={userEmail}
               notify={notify}
